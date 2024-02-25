@@ -1,0 +1,52 @@
+/* Navbar.css */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo {
+  width: 150px;
+  height: 50px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  margin-right: 1rem;
+  color: #333;
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: baseline; 
+}
+
+/* Base button styles */
+.auth-button {
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  color: white;
+  font-size: 1rem; 
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center;
+  text-align: center; 
+  vertical-align: middle; 
+  line-height: 1; 
+  height: 40px; 
+}
+
+
+.login-button {
+  background-color: #4CAF50; /* Green color for the login button */
+}
+
+
+.logout-button {
+  background-color: #f44336; /* Red color for the logout button */
+}

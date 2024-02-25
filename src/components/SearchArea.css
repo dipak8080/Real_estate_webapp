@@ -1,0 +1,118 @@
+
+/* SearchArea.css */
+.search-area-container {
+  position: relative;
+  width: 100%;
+  height: 250px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.background-image {
+  background-size: cover;
+  background-position: center;
+  filter: brightness(50%);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.search-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 2; 
+}
+
+.search-area input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white; 
+  color: black; 
+}
+
+.search-area button {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+  
+/* FeaturedProperties.css */
+.featured-section {
+  margin: 40px 0;
+}
+
+.featured-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px; 
+}
+
+.featured-properties {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; 
+}
+
+.property {
+  flex: 1; 
+  height: 200px; 
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+}
+
+  
+.action-section {
+  display: flex;
+  justify-content: space-around;
+  margin: 40px 0;
+}
+
+.buy-property, .sell-property {
+  width: 45%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none; /* This will remove the underline */
+}
+
+.buy-property::before, .sell-property::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.buy-property p, .sell-property p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+}
+
+.buy-property:hover, .sell-property:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
