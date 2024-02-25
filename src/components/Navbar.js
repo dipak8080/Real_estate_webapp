@@ -18,7 +18,7 @@ function Navbar() {
         <Link to="/buy">Buy</Link>
         <Link to="/profile">Profile</Link>
         <Link to="/add-property">Add Property</Link>
-        <Link to="/login">Login</Link>
+        
       </div>
       <div className="auth-buttons">
         {/* login-button class for green color */}

@@ -2,46 +2,23 @@ import React, { useState } from 'react';
 import './AddPropertyPage.css';
 
 function AddPropertyPage() {
+  const [propertyType, setPropertyType] = useState('');
   const [state, setState] = useState('');
   const [districts, setDistricts] = useState([]);
-  const states = ['Koshi', 'Madesh', 'Bagmati', 'Gandaki', 'Lumbini', 'Sudurpaschim', 'Karnali']; // Ensure all states are listed
+  const states = ['Koshi', 'Madesh', 'Bagmati', 'Gandaki', 'Lumbini', 'Sudurpaschim', 'Karnali'];
 
   const handleStateChange = (e) => {
     const stateSelected = e.target.value;
     setState(stateSelected);
-    // Logic to update districts based on selected state
     const districtOptions = {
-        Koshi: [
-          'Taplejung', 'Panchthar', 'Illam', 'Jhapa', 'Morang', 'Sunsari', 'Dhankuta', 
-          'Terhathum', 'Sankhuwasabha', 'Bhojpur', 'Solukhumbu', 'Okhaldhunga', 
-          'Khotang', 'Udayapur'
-        ],
-        Madesh: [
-          'Saptari', 'Siraha', 'Dhanusa', 'Mahottari', 'Sarlahi', 'Bara', 'Parsa', 'Rautahat'
-        ],
-        Bagmati: [
-          'Sindhuli', 'Ramechhap', 'Dolakha', 'Sindhupalchowk', 'Kavrepalanchok', 
-          'Lalitpur', 'Bhaktapur', 'Kathmandu', 'Nuwakot', 'Rasuwa', 'Dhading', 
-          'Makwanpur', 'Chitwan'
-        ],
-        Gandaki: [
-          'Gorkha', 'Lamjung', 'Tanahun', 'Syangja', 'Kaski', 'Manang', 'Mustang', 
-          'Myagdi', 'Nawalpur', 'Parbat', 'Baglung'
-        ],
-        Lumbini: [
-          'Gulmi', 'Palpa', 'Parasi', 'Rupandehi', 'Kapilvastu', 'Arghakhanchi', 
-          'Pyuthan', 'Rolpa', 'Eastern Rukum', 'Banke', 'Bardiya', 'Dang'
-        ],
-        Sudurpaschim: [
-          'Bajura', 'Bajhang', 'Achham', 'Doti', 'Kailali', 'Kanchanpur', 'Dadeldhura', 
-          'Baitadi', 'Darchula'
-        ],
-        Karnali: [
-          'Western Rukum', 'Salyan', 'Dolpa', 'Humla', 'Jumla', 'Kalikot', 'Mugu', 
-          'Surkhet', 'Dailekh', 'Jajarkot'
-        ]
-        
-      };
+      Koshi: ['Taplejung', 'Panchthar', 'Illam', 'Jhapa', 'Morang', 'Sunsari', 'Dhankuta', 'Terhathum', 'Sankhuwasabha', 'Bhojpur', 'Solukhumbu', 'Okhaldhunga', 'Khotang', 'Udayapur'],
+      Madesh: ['Saptari', 'Siraha', 'Dhanusa', 'Mahottari', 'Sarlahi', 'Bara', 'Parsa', 'Rautahat'],
+      Bagmati: ['Sindhuli', 'Ramechhap', 'Dolakha', 'Sindhupalchowk', 'Kavrepalanchok', 'Lalitpur', 'Bhaktapur', 'Kathmandu', 'Nuwakot', 'Rasuwa', 'Dhading', 'Makwanpur', 'Chitwan'],
+      Gandaki: ['Gorkha', 'Lamjung', 'Tanahun', 'Syangja', 'Kaski', 'Manang', 'Mustang', 'Myagdi', 'Nawalpur', 'Parbat', 'Baglung'],
+      Lumbini: ['Gulmi', 'Palpa', 'Parasi', 'Rupandehi', 'Kapilvastu', 'Arghakhanchi', 'Pyuthan', 'Rolpa', 'Eastern Rukum', 'Banke', 'Bardiya', 'Dang'],
+      Sudurpaschim: ['Bajura', 'Bajhang', 'Achham', 'Doti', 'Kailali', 'Kanchanpur', 'Dadeldhura', 'Baitadi', 'Darchula'],
+      Karnali: ['Western Rukum', 'Salyan', 'Dolpa', 'Humla', 'Jumla', 'Kalikot', 'Mugu', 'Surkhet', 'Dailekh', 'Jajarkot'],
+    };
     
     setDistricts(districtOptions[stateSelected] || []);
   };
@@ -50,7 +27,13 @@ function AddPropertyPage() {
     <div className="add-property-page">
       <h1>Property Overview</h1>
       <form>
-        {/* The rest of your form elements here */}
+        {/* Property Type dropdown */}
+        <label>Property Type:</label>
+        <select name="propertyType" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
+          <option value="">Select Property Type</option>
+          <option value="Land">Land</option>
+          <option value="House">House</option>
+        </select>
 
         {/* State dropdown */}
         <label>State:</label>
@@ -72,9 +55,9 @@ function AddPropertyPage() {
           )}
         </select>
 
-         {/* Municipality field */}
-         <label>Location:</label>
-        <input type="text" name="municipality" placeholder="Enter Location" />
+        {/* Location field */}
+        <label>Location:</label>
+        <input type="text" name="location" placeholder="Enter Location" />
 
         {/* Area field */}
         <label>Area:</label>
@@ -82,7 +65,7 @@ function AddPropertyPage() {
 
         {/* Price Field */}
         <label>Price:</label>
-        <input type="text" name="area" placeholder="Enter Price" />
+        <input type="text" name="price" placeholder="Enter Price" />
 
         {/* Add Image field */}
         <label>Add Image:</label>
@@ -102,7 +85,6 @@ function AddPropertyPage() {
 
         {/* Submit button */}
         <button type="submit">Publish</button>
-
       </form>
     </div>
   );
