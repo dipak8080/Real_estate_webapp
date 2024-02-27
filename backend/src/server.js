@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const User = require('./models/User'); // Make sure this path is correct
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -14,6 +15,17 @@ mongoose.connect(process.env.MONGODB_URI)
 // Define a simple route for testing
 app.get('/', (req, res) => {
   res.send('Hello World!');
+});
+
+// Endpoint to create a new user
+app.post('/users', async (req, res) => {
+  try {
+    const newUser = new User(req.body);
+    const savedUser = await newUser.save();
+    res.status(201).send(savedUser);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 
 // Listen on a port
