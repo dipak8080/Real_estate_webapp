@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Ensure useNavigate is imported
+import axios from 'axios';
 import './SignUp.css';
 
 function SignUp() {
@@ -7,11 +8,31 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [location, setLocation] = useState('');
+    const [password, setPassword] = useState(''); // State for the password
+    const [error, setError] = useState(''); // State for storing error messages
+    const navigate = useNavigate(); // Hook for navigation
 
     const handleSignUp = (event) => {
         event.preventDefault();
-        // Handle the account creation logic 
-        console.log('Creating account with:', fullName, email, phone, location);
+
+        const user = {
+            fullName,
+            email,
+            phone,
+            location,
+            password, // Include password in the user object
+        };
+
+        axios.post('http://localhost:5000/api/users/signup', user)
+        .then(response => {
+            alert('Account created successfully');
+            navigate('/login'); // Redirect to the login page
+        })
+        .catch(error => {
+            const errorMessage = error.response?.data?.message || 'Failed to create account, please try again.';
+            setError(errorMessage); // Set error message to state
+            console.error('Signup error:', errorMessage);
+        });
     };
 
     return (
@@ -50,7 +71,16 @@ function SignUp() {
                     onChange={(e) => setLocation(e.target.value)}
                     required
                 />
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
                 <button type="submit" className="signup-button">Create Account</button>
+                {error && <div className="signup-error">{error}</div>} {/* Display error message if exists */}
                 <p className="login-prompt">
                     Already a user? <Link to="/login">Login here</Link>
                 </p>

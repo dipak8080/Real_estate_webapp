@@ -1,13 +1,9 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './Navbar.css'; 
+import { Link } from 'react-router-dom'; // Corrected import for Link
+import './Navbar.css';
 
 function Navbar() {
-  const navigate = useNavigate();
-
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
+  // No need to import useNavigate since it's not being used anymore
 
   return (
     <nav className="navbar">
@@ -18,12 +14,10 @@ function Navbar() {
         <Link to="/buy">Buy</Link>
         <Link to="/profile">Profile</Link>
         <Link to="/add-property">Add Property</Link>
-        
       </div>
       <div className="auth-buttons">
-        {/* login-button class for green color */}
-        <button onClick={handleLoginClick} className="auth-button login-button">Login</button>
-        {/*logout-button class for red color */}
+        {/* Removed the button element for Login */}
+        {/* Logout button class for red color */}
         <button className="auth-button logout-button">Logout</button>
       </div>
     </nav>
