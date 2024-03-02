@@ -1,41 +1,44 @@
-const User = require('../models/User');
+const User = require('../models/User'); // Make sure this path is correct.
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Registration handler
 exports.register = async (req, res) => {
     try {
-        console.log('Register attempt:', req.body);
         const { email, password } = req.body;
 
-        // Check if user already exists
+        // Check if the user already exists
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(409).json({ message: 'Email already in use' });
         }
 
-        // Hash password
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 12);
 
-        // Create a new user
-        const user = new User({
-            ...req.body,
+        // Create a new user instance
+        const newUser = new User({
+            email,
             password: hashedPassword
         });
 
-        // Save user in the database
-        const savedUser = await user.save();
-        console.log('User registered:', savedUser);
+        // Save the new user to the database
+        const user = await newUser.save();
 
-        res.status(201).json({ user: savedUser });
+        // Respond with the new user (excluding the password)
+        res.status(201).json({
+            userId: user._id,
+            email: user.email
+            // You can add other user fields you want to return here
+        });
     } catch (error) {
-        console.error('Register error:', error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error registering new user', error: error.message });
     }
 };
 
+// Login handler
 exports.login = async (req, res) => {
     try {
-        console.log('Login attempt:', req.body);
         const { email, password } = req.body;
 
         // Find the user by email
@@ -50,17 +53,23 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Create token
+        // Create a JWT token
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '1h' } // or another duration appropriate for your app
         );
-        console.log('User logged in:', user);
 
+        // Respond with token
         res.json({ token, userId: user._id });
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Error logging in', error: error.message });
     }
+};
+
+// Logout handler
+exports.logout = (req, res) => {
+    // Since JWTs are stateless, there's no need to handle anything on the server for logout.
+    // Just instruct the client to delete the stored token.
+    res.status(200).send({ message: 'Logout successful' });
 };

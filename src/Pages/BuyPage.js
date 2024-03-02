@@ -7,7 +7,7 @@ function BuyPage() {
   return (
     <>
       <SearchArea />
-      <h2>Searched Properties</h2> 
+       
       <PropertyList /> 
     </>
   );

@@ -1,27 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import './PropertyDetailsPage.css';
 
 function PropertyDetailsPage() {
-  // Placeholder data
-  const propertyDetails = {
-    userName: 'John Doe',
-    phoneNumber: '123-456-7890',
-    state: 'State Name',
-    district: 'District Name',
-    location: 'Location Name',
-    area: '123 sq ft',
-    price: '$300,000',
-    description: 'This is a great property with lots of natural light...'
-    
-  };
+  const [propertyDetails, setPropertyDetails] = useState(null);
+  const { id } = useParams(); // Assuming you're using React Router v5 or v6
+
+  useEffect(() => {
+    const fetchPropertyDetails = async () => {
+      try {
+        const response = await axios.get(`/api/properties/${id}`);
+        setPropertyDetails(response.data);
+      } catch (error) {
+        console.error('Error fetching property details:', error);
+      }
+    };
+
+    fetchPropertyDetails();
+  }, [id]);
+
+  if (!propertyDetails) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
-      
       <div className="property-details-container">
         <div className="gallery">
           <div className="photo-gallery">
-            {/* Image carousel would go here */}
+            {/* Image carousel would go here. For demonstration, let's assume it's not dynamically generated yet */}
             <p>Property Photos</p>
           </div>
           <div className="video-tour">
@@ -36,12 +44,12 @@ function PropertyDetailsPage() {
         <div className="details">
           <div className="property-info">
             <h2>Property Details</h2>
-            <p>{propertyDetails.state}</p>
-            <p>{propertyDetails.district}</p>
-            <p>{propertyDetails.location}</p>
-            <p>{propertyDetails.area}</p>
-            <p>{propertyDetails.price}</p>
-            <p>{propertyDetails.description}</p>
+            <p>State: {propertyDetails.state}</p>
+            <p>District: {propertyDetails.district}</p>
+            <p>Location: {propertyDetails.location}</p>
+            <p>Area: {propertyDetails.area}</p>
+            <p>Price: {propertyDetails.price}</p>
+            <p>Description: {propertyDetails.description}</p>
           </div>
           <div className="contact-info">
             <div className="user-name">

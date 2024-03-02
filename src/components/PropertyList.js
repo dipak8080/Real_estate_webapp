@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './PropertyList.css';
 
 function PropertyList() {
+  const [properties, setProperties] = useState([]);
   const navigate = useNavigate();
-  const properties = [
-    {
-      id: 1,
-      imageUrl: 'path/to/image1.jpg',
-      description: 'Charming Bungalow in the city outskirts',
-      location: 'Springfield',
-      price: '500,000',
-    },
-    {
-      id: 2,
-      imageUrl: 'path/to/image2.jpg',
-      description: 'Modern Apartment with a view of the skyline',
-      location: 'Downtown',
-      price: '300,000',
-    },
-   
-  ];
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/properties');
+        setProperties(response.data);
+      } catch (error) {
+        const message = error.response?.data.message || error.message;
+        console.error('Error fetching properties:', message);
+        alert(`Error fetching properties: ${message}`);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   function handlePropertyClick(propertyId) {
     navigate(`/property/${propertyId}`);
@@ -29,20 +29,19 @@ function PropertyList() {
   return (
     <div className="property-list">
       {properties.map((property) => (
-        <div key={property.id} className="property-item">
-          {/* Property Image */}
+        <div key={property._id} className="property-item" onClick={() => handlePropertyClick(property._id)}>
           <div className="property-image-wrapper">
-            <img src={property.imageUrl} alt="Property" className="property-image" />
+            {/* Update to dynamically create the image src, handling both cases: featurePhoto present or default placeholder */}
+            <img src={property.featurePhoto ? `http://localhost:5000/uploads/${property.featurePhoto}` : '/images/default-placeholder.jpg'} alt="Property" />
           </div>
-          {/* Property Details */}
           <div className="property-details">
-            <h3>{property.description}</h3>
-            <p>{property.location}</p>
+            <p>State: {property.state}</p>
+            <p>Location: {property.location}</p>
+            <p>District: {property.district}</p>
+            <p>Municipality: {property.municipality}</p>
             <p>Price: {property.price}</p>
-            {/* Details Button */}
-            <button className="details-button" onClick={() => handlePropertyClick(property.id)}>
-              Details
-            </button>
+            <h3>{property.description}</h3>
+            <button className="details-button">Details</button>
           </div>
         </div>
       ))}
