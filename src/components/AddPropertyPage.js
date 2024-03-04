@@ -58,7 +58,7 @@ function AddPropertyPage() {
     if (video) {
       formData.append('video', video);
     }
-    
+
     if (propertyPapers) {
       for (let i = 0; i < propertyPapers.length; i++) {
         formData.append('propertyPapers', propertyPapers[i]);
@@ -177,7 +177,7 @@ function AddPropertyPage() {
 
         <div className="form-group">
           <label>Add 360 Image:</label>
-          <input type="file" name="image360" onChange={(e) => setImage360(e.target.files)} />
+          <input type="file" name="image360" multiple onChange={(e) => setImage360(e.target.files)} />
         </div>
 
         <div className="form-group">
