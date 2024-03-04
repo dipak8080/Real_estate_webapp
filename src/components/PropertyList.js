@@ -35,6 +35,7 @@ function PropertyList() {
             <img src={property.featurePhoto ? `http://localhost:5000/uploads/${property.featurePhoto}` : '/images/default-placeholder.jpg'} alt="Property" />
           </div>
           <div className="property-details">
+           <h3 className="property-type">{property.propertyType}</h3>
             <p>State: {property.state}</p>
             <p>Location: {property.location}</p>
             <p>District: {property.district}</p>

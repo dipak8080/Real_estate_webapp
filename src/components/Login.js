@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from './AuthContext'; // Ensure this path is correct based on your project structure
+import { useAuth } from './AuthContext';
 import './Login.css';
 
 function Login() {

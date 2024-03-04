@@ -1,20 +1,24 @@
 // src/routes/properties.js
 const express = require('express');
 const upload = require('../utils/upload');
-const { createProperty, listProperties } = require('../controllers/propertyController'); // Ensure these are correctly imported
+const { createProperty, listProperties, getPropertyDetails } = require('../controllers/propertyController'); 
+
 const router = express.Router();
 
 // Updated POST route to include 'featurePhoto' in upload.fields
 router.post('/add', upload.fields([
   { name: 'images', maxCount: 10 },
-  { name: 'image360', maxCount: 1 },
-  { name: 'propertyPapers', maxCount: 1 },
-  { name: 'featurePhoto', maxCount: 1 } // Added line for handling featurePhoto
+  { name: 'image360', maxCount: 5 }, // Example: Adjust maxCount as needed
+  { name: 'propertyPapers', maxCount: 5 }, // Example: Adjust maxCount as needed
+  { name: 'video', maxCount: 1 },
+  { name: 'featurePhoto', maxCount: 1 } 
 ]), createProperty);
 
 // GET route to list all properties
 router.get('/', listProperties);
 
-// ... other routes if any ...
+// GET route to retrieve a single property by ID
+router.get('/:id', getPropertyDetails);
+
 
 module.exports = router;

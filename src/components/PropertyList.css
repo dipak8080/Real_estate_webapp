@@ -2,43 +2,34 @@
 .property-list {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 0 15px; 
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 30px;
+  grid-gap: 30px; 
 }
 
 .property-item {
   background-color: #fff;
   border: 1px solid #e1e1e1;
   border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   display: flex;
   flex-direction: column;
-}
-
-.property-image-wrapper {
-  height: 200px; /* Set a fixed height for the wrapper */
-  width: 100%; /* Ensure the wrapper spans the full width of the item */
-  display: flex; /* Use flexbox to center the image */
-  justify-content: center; /* Center image horizontally */
-  align-items: center; /* Center image vertically */
-  overflow: hidden; /* Prevents the image from overflowing */
 }
 
 .property-image {
   width: 100%;
-  height: auto; /* Maintain the aspect ratio of the image */
-  object-fit: cover; /* Cover the area of the wrapper without stretching */
+  height: 200px; 
+  object-fit: cover; 
 }
 
-.property-details {
+.property-description {
   padding: 15px;
-  flex-grow: 1;
+  flex-grow: 1; 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; 
 }
 
 .property-title {
@@ -48,7 +39,7 @@
 }
 
 .property-text {
-  flex-grow: 1;
+  flex-grow: 1; 
   color: #666;
 }
 

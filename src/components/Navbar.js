@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Ensure useNavigate is imported
-import axios from 'axios'; // Import axios for making HTTP requests
+import { Link, useNavigate } from 'react-router-dom'; 
+import axios from 'axios'; 
 import './Navbar.css';
 
 function Navbar() {

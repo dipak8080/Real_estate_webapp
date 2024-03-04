@@ -13,9 +13,11 @@ function AddPropertyPage() {
   const [description, setDescription] = useState('');
   const [images, setImages] = useState(null);
   const [image360, setImage360] = useState(null);
+  const [video, setVideo] = useState(null);
   const [propertyPapers, setPropertyPapers] = useState(null);
   const [featurePhoto, setFeaturePhoto] = useState(null);
-  const [districts, setDistricts] = useState([]);
+  const [districts, setDistricts] = useState([]); // Added state for dynamic districts based on state selection
+
   const states = ['Koshi', 'Madesh', 'Bagmati', 'Gandaki', 'Lumbini', 'Sudurpaschim', 'Karnali'];
 
   const districtOptions = {
@@ -31,7 +33,7 @@ function AddPropertyPage() {
   const handleStateChange = (e) => {
     const stateSelected = e.target.value;
     setState(stateSelected);
-    setDistricts(districtOptions[stateSelected] || []);
+    setDistricts(districtOptions[stateSelected] || []); // Update districts based on selected state
   };
 
   const handleSubmit = async (event) => {
@@ -51,7 +53,10 @@ function AddPropertyPage() {
       }
     }
     if (image360) {
-      formData.append('image360', image360);
+      formData.append('image360', image360[0]);
+    }
+    if (video) {
+      formData.append('video', video);
     }
     if (propertyPapers) {
       formData.append('propertyPapers', propertyPapers);
@@ -78,66 +83,120 @@ function AddPropertyPage() {
     <div className="add-property-page">
       <h1>Add New Property</h1>
       <form onSubmit={handleSubmit}>
-        <label>Property Type:</label>
-        <select name="propertyType" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
-          <option value="">Select Property Type</option>
-          <option value="Land">Land</option>
-          <option value="House">House</option>
-        </select>
+        <div className="form-group">
+          <label>Property Type:</label>
+          <select name="propertyType" value={propertyType} onChange={(e) => setPropertyType(e.target.value)}>
+            <option value="">Select Property Type</option>
+            <option value="Land">Land</option>
+            <option value="House">House</option>
+          </select>
+        </div>
 
-        <label>State:</label>
-        <select name="state" value={state} onChange={handleStateChange}>
-          <option value="">Select State</option>
-          {states.map((stateName) => (
-            <option value={stateName} key={stateName}>{stateName}</option>
-          ))}
-        </select>
+        <div className="form-group">
+          <label>State:</label>
+          <select name="state" value={state} onChange={handleStateChange}>
+            <option value="">Select State</option>
+            {states.map((stateName) => (
+              <option value={stateName} key={stateName}>{stateName}</option>
+            ))}
+          </select>
+        </div>
 
-        <label>District:</label>
-        <select name="district" value={district} onChange={(e) => setDistrict(e.target.value)}>
-          <option value="">Select District</option>
-          {districts.map((districtName) => (
-            <option value={districtName} key={districtName}>{districtName}</option>
-          ))}
-        </select>
+        <div className="form-group">
+          <label>District:</label>
+          <select name="district" value={district} onChange={(e) => setDistrict(e.target.value)}>
+            <option value="">Select District</option>
+            {districts.map((districtName) => (
+              <option value={districtName} key={districtName}>{districtName}</option>
+            ))}
+          </select>
+        </div>
 
-        <label>Municipality:</label>
-        <input 
-          type="text" 
-          name="municipality" 
-          value={municipality} 
-          onChange={(e) => setMunicipality(e.target.value)} 
-          placeholder="Enter Municipality" 
-        />
+        <div className="form-group">
+          <label>Municipality:</label>
+          <input 
+            type="text" 
+            name="municipality" 
+            value={municipality} 
+            onChange={(e) => setMunicipality(e.target.value)} 
+            placeholder="Enter Municipality" 
+          />
+        </div>
 
-        <label>Location:</label>
-        <input type="text" name="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Enter Location" />
+        <div className="form-group">
+          <label>Location:</label>
+          <input 
+            type="text" 
+            name="location" 
+            value={location} 
+            onChange={(e) => setLocation(e.target.value)} 
+            placeholder="Enter Location" 
+          />
+        </div>
 
-        <label>Area (sq ft):</label>
-        <input type="text" name="area" value={area} onChange={(e) => setArea(e.target.value)} placeholder="Enter Area" />
+        <div className="form-group">
+          <label>Area (sq ft):</label>
+          <input 
+            type="text" 
+            name="area" 
+            value={area} 
+            onChange={(e) => setArea(e.target.value)} 
+            placeholder="Enter Area" 
+          />
+        </div>
 
-        <label>Price ($):</label>
-        <input type="text" name="price" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="Enter Price" />
+        <div className="form-group">
+          <label>Price ($):</label>
+          <input 
+            type="text" 
+            name="price" 
+            value={price} 
+            onChange={(e) => setPrice(e.target.value)} 
+            placeholder="Enter Price" 
+          />
+        </div>
 
-        <label>Description:</label>
-        <textarea name="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Write a description..."></textarea>
+        <div className="form-group">
+          <label>Description:</label>
+          <textarea 
+            name="description" 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)} 
+            placeholder="Write a description..."
+          ></textarea>
+        </div>
 
-        <label>Add Images:</label>
-        <input type="file" name="images" multiple onChange={(e) => setImages(e.target.files)} />
+        <div className="form-group">
+          <label>Add Images:</label>
+          <input type="file" name="images" multiple onChange={(e) => setImages(e.target.files)} />
+        </div>
 
-        <label>Add 360 Image:</label>
-        <input type="file" name="image360" onChange={(e) => setImage360(e.target.files[0])} />
+        <div className="form-group">
+          <label>Add 360 Image:</label>
+          <input type="file" name="image360" onChange={(e) => setImage360(e.target.files)} />
+        </div>
 
-        <label>Property Papers:</label>
-        <input type="file" name="propertyPapers" onChange={(e) => setPropertyPapers(e.target.files[0])} />
+        <div className="form-group">
+          <label>Add Video:</label>
+          <input type="file" name="video" onChange={(e) => setVideo(e.target.files[0])} />
+        </div>
 
-        <label>Feature Photo:</label>
-        <input type="file" name="featurePhoto" onChange={(e) => setFeaturePhoto(e.target.files[0])} />
+        <div className="form-group">
+          <label>Property Papers:</label>
+          <input type="file" name="propertyPapers" multiple onChange={(e) => setPropertyPapers(e.target.files)} />
+        </div>
 
-        <button type="submit">Publish</button>
+        <div className="form-group">
+          <label>Feature Photo:</label>
+          <input type="file" name="featurePhoto" onChange={(e) => setFeaturePhoto(e.target.files[0])} />
+        </div>
+
+        <button type="submit" className="submit-button">Publish</button>
       </form>
     </div>
   );
 }
 
 export default AddPropertyPage;
+
+

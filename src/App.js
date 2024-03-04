@@ -11,6 +11,7 @@ import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Navbar from './components/Navbar';
 
+
 function App() {
   return (
     <AuthProvider>
@@ -26,7 +27,8 @@ function App() {
             <Route path="buy" element={<ProtectedRoute><BuyPage /></ProtectedRoute>} />
             <Route path="add-property" element={<ProtectedRoute><AddPropertyPage /></ProtectedRoute>} />
             <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="property/:propertyId" element={<ProtectedRoute><PropertyDetailsPage /></ProtectedRoute>} />
+            {/* Update the route below to match the useParams hook in PropertyDetailsPage */}
+            <Route path="property/:id" element={<ProtectedRoute><PropertyDetailsPage /></ProtectedRoute>} />
           </Route>
 
           {/* Redirect to home if no match found */}
