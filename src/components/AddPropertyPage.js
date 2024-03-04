@@ -58,9 +58,13 @@ function AddPropertyPage() {
     if (video) {
       formData.append('video', video);
     }
+    
     if (propertyPapers) {
-      formData.append('propertyPapers', propertyPapers);
+      for (let i = 0; i < propertyPapers.length; i++) {
+        formData.append('propertyPapers', propertyPapers[i]);
+      }
     }
+
     if (featurePhoto) {
       formData.append('featurePhoto', featurePhoto);
     }
