@@ -7,10 +7,9 @@ const createProperty = async (req, res) => {
     
     // Adjusting to save only filenames for images, image360, propertyPapers, featurePhoto, and now video
     const images = req.files['images'] ? req.files['images'].map(file => file.filename) : [];
-    const image360 = req.files['image360'] ? req.files['image360'][0].filename : '';
-    const propertyPapers = req.files['propertyPapers'] ? req.files['propertyPapers'][0].filename : '';
+    const image360 = req.files['image360'] ? req.files['image360'].map(file => file.filename) : [];
+    const propertyPapers = req.files['propertyPapers'] ? req.files['propertyPapers'].map(file => file.filename) : [];
     const featurePhoto = req.files['featurePhoto'] ? req.files['featurePhoto'][0].filename : null;
-    // Handling video file uploads
     const video = req.files['video'] ? req.files['video'][0].filename : '';
 
     const property = new Property({

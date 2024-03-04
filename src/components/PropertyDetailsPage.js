@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Viewer } from '@photo-sphere-viewer/core';
@@ -9,6 +9,7 @@ import './PropertyDetailsPage.css';
 function PropertyDetailsPage() {
   const [propertyDetails, setPropertyDetails] = useState(null);
   const [modalImage, setModalImage] = useState(null); // For handling modal image popups
+  const viewersRef = useRef([]); // Ref to store the viewers
   const { id } = useParams();
   const baseUrl = 'http://localhost:5000/uploads/';
 
@@ -26,27 +27,43 @@ function PropertyDetailsPage() {
   }, [id]);
 
   useEffect(() => {
-    // This effect handles the initialization of the 360-degree image viewer
-    if (propertyDetails && propertyDetails.image360) {
-      const viewer = new Viewer({
-        container: document.querySelector('#viewer360'),
-        panorama: `${baseUrl}${propertyDetails.image360}`
-        // Add other Viewer options as needed
-      });
+    // Destroy existing viewers to prevent duplicates
+    viewersRef.current.forEach((viewer) => viewer.destroy());
+    viewersRef.current = [];
 
-      // Cleanup function to destroy the viewer when the component unmounts or when the image changes
-      return () => viewer.destroy();
+    if (propertyDetails && propertyDetails.image360 && propertyDetails.image360.length > 0) {
+      propertyDetails.image360.forEach((image360Url, index) => {
+        const viewerElement = document.querySelector(`#viewer360-${index}`);
+        if (!viewerElement) return; // Guard against missing elements
+
+        const viewer = new Viewer({
+          container: viewerElement,
+          panorama: `${baseUrl}${image360Url}`,
+        });
+
+        viewersRef.current.push(viewer);
+      });
     }
+
+    // Cleanup function to destroy all viewers when the component unmounts or updates
+    return () => {
+      viewersRef.current.forEach((viewer) => {
+        // Only attempt to destroy the viewer if it's still present in the DOM
+        if (viewer && viewer.container && viewer.container.parentNode) {
+          viewer.destroy();
+        }
+      });
+      // Clear the viewersRef array after destroying the viewers
+      viewersRef.current = [];
+    };
   }, [propertyDetails, baseUrl]);
 
   const openModal = (imagePath) => {
     setModalImage(`${baseUrl}${imagePath}`);
-    // Optionally, handle modal display here if not using CSS for showing/hiding
   };
 
   const closeModal = () => {
     setModalImage(null);
-    // Optionally, handle modal hiding here if not using CSS for showing/hiding
   };
 
   if (!propertyDetails) {
@@ -60,7 +77,7 @@ function PropertyDetailsPage() {
         <div className="gallery-section">
           <h2>Property Images</h2>
           <div className="gallery-container">
-            {propertyDetails.images.map((image, index) => (
+            {propertyDetails.images && propertyDetails.images.map((image, index) => (
               <div className="gallery-item" key={index} onClick={() => openModal(image)}>
                 <img src={`${baseUrl}${image}`} alt={`Property ${index}`} />
               </div>
@@ -68,34 +85,36 @@ function PropertyDetailsPage() {
           </div>
         </div>
 
-    {/* Property Papers Section */}
-<div className="gallery-section">
-  <h2>Property Papers</h2>
-  <div className="papers-container">
-    {propertyDetails.propertyPapers && propertyDetails.propertyPapers.map((paper, index) => (
-      <div className="gallery-item" key={index} onClick={() => openModal(paper)}>
-        <img src={`${baseUrl}${paper}`} alt={`Property paper ${index}`} />
-      </div>
-    ))}
-  </div>
-</div>
+        {/* Property Papers Section */}
+        <div className="gallery-section">
+          <h2>Property Papers</h2>
+          <div className="papers-container">
+            {propertyDetails.propertyPapers && propertyDetails.propertyPapers.map((paper, index) => (
+              <div className="gallery-item" key={index} onClick={() => openModal(paper)}>
+                <img src={`${baseUrl}${paper}`} alt={`Property paper ${index}`} />
+              </div>
+            ))}
+          </div>
+        </div>
 
-{/* Video Section */}
-{propertyDetails.video && (
-  <div className="gallery-section">
-    <h2>Property Video</h2>
-    <video width="500" height="300" controls>
-      <source src={`${baseUrl}${propertyDetails.video}`} type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-  </div>
-)}
-
-        {/* 360 Image Section */}
-        {propertyDetails.image360 && (
+        {/* Video Section */}
+        {propertyDetails.video && (
           <div className="gallery-section">
-            <h2>360° Image</h2>
-            <div id="viewer360" style={{ width: '500px', height: '500px' }}></div>
+            <h2>Property Video</h2>
+            <video width="500" height="300" controls>
+              <source src={`${baseUrl}${propertyDetails.video}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )}
+
+        {/* 360 Image Section for multiple images */}
+        {propertyDetails.image360 && propertyDetails.image360.length > 0 && (
+          <div className="gallery-section">
+            <h2>360° Images</h2>
+            {propertyDetails.image360.map((image360Url, index) => (
+              <div key={index} id={`viewer360-${index}`} style={{ width: '500px', height: '500px' }}></div>
+            ))}
           </div>
         )}
 
@@ -123,17 +142,17 @@ function PropertyDetailsPage() {
             <button>Send Message</button>
           </div>
         </div>
-      </div>
 
-      {/* Modal Popup */}
-      {modalImage && (
-        <div className="modal" onClick={closeModal}>
-          <span className="close" onClick={closeModal}>&times;</span>
-          <div className="modal-content">
-            <img src={modalImage} alt="Expanded view" />
+        {/* Modal Popup */}
+        {modalImage && (
+          <div className="modal" onClick={closeModal}>
+            <span className="close" onClick={closeModal}>&times;</span>
+            <div className="modal-content">
+              <img src={modalImage} alt="Expanded view" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

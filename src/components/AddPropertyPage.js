@@ -52,9 +52,13 @@ function AddPropertyPage() {
         formData.append('images', images[i]);
       }
     }
+    
     if (image360) {
-      formData.append('image360', image360[0]);
+      for (let i = 0; i < image360.length; i++) {
+        formData.append('image360', image360[i]);
+      }
     }
+
     if (video) {
       formData.append('video', video);
     }
