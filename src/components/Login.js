@@ -14,11 +14,18 @@ function Login() {
     const handleLogin = (event) => {
         event.preventDefault();
         setError(''); // Clear any existing errors
-
+    
         axios.post('http://localhost:5000/api/users/login', { email, password })
             .then(response => {
-                login(response.data.token); // Update this if your login method expects different parameters
-                navigate('/home'); // Navigate to the home page after successful login
+                // Assuming the token is in response.data.token
+                const token = response.data.token;
+                if (token) {
+                    localStorage.setItem('token', token); // Save the token to local storage
+                    login(token); // Update this if your login method expects different parameters
+                    navigate('/home'); // Navigate to the home page after successful login
+                } else {
+                    throw new Error('Token not provided by the server');
+                }
             })
             .catch(error => {
                 const errorMessage = error.response?.data?.error || 'Login failed, please try again.';

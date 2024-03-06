@@ -73,3 +73,57 @@ exports.logout = (req, res) => {
     // Just instruct the client to delete the stored token.
     res.status(200).send({ message: 'Logout successful' });
 };
+
+
+
+
+// Function to handle fetching user profile data
+exports.getUserProfile = async (req, res) => {
+    try {
+        // Assuming you've verified and decoded the token and attached the user ID to req.user
+        const user = await User.findById(req.user._id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Respond with the user data, excluding the password
+        res.json({
+            fullName: user.fullName,
+            email: user.email,
+            phone: user.phone,
+            location: user.location
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user profile', error: error.message });
+    }
+};
+
+// Update profile handler
+exports.updateProfile = async (req, res) => {
+    console.log("Fetching user profile for ID:", req.user._id);
+    try {
+        const userId = req.user._id; // Assuming you're getting user ID from the token
+        const { fullName, location, phone } = req.body;
+
+        const user = await User.findByIdAndUpdate(userId, {
+            fullName,
+            location,
+            phone
+        }, { new: true }); // { new: true } option returns the document after update
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            userId: user._id,
+            email: user.email,
+            fullName: user.fullName,
+            location: user.location,
+            phone: user.phone
+            // Add any other fields you wish to return
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating profile', error: error.message });
+    }
+};
+
