@@ -10,7 +10,13 @@ function PropertyList() {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/properties');
+        const token = localStorage.getItem('token');
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get('http://localhost:5000/api/properties', config);
         setProperties(response.data);
       } catch (error) {
         const message = error.response?.data.message || error.message;
@@ -31,11 +37,10 @@ function PropertyList() {
       {properties.map((property) => (
         <div key={property._id} className="property-item" onClick={() => handlePropertyClick(property._id)}>
           <div className="property-image-wrapper">
-            {/* Update to dynamically create the image src, handling both cases: featurePhoto present or default placeholder */}
             <img src={property.featurePhoto ? `http://localhost:5000/uploads/${property.featurePhoto}` : '/images/default-placeholder.jpg'} alt="Property" />
           </div>
           <div className="property-details">
-           <h3 className="property-type">{property.propertyType}</h3>
+            <h3 className="property-type">{property.propertyType}</h3>
             <p>State: {property.state}</p>
             <p>Location: {property.location}</p>
             <p>District: {property.district}</p>

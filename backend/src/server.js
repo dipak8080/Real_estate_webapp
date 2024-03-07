@@ -4,13 +4,23 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
-const propertyRoutes = require('./routes/properties');
-const app = express();
+const propertyRoutes = require('./routes/properties'); // Ensure this is the correct path to your property routes file
 
-// Middleware
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));  // Set the limit for JSON payloads
-app.use(express.urlencoded({ limit: '50mb', extended: true }));  // Set the limit for URL-encoded payloads
+const app = express();
+// Detailed CORS configuration
+const corsOptions = {
+  origin: 'http://localhost:3000', // Adjust if your frontend is served from a different origin
+  credentials: true, // This is important if you're sending requests with credentials (such as cookies or authorization headers)
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Apply CORS middleware with the specified options
+app.use(cors(corsOptions));
+
+// Middleware for parsing JSON and urlencoded data
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files from the uploads directory
 app.use('/uploads', express.static('uploads'));

@@ -16,13 +16,23 @@ function PropertyDetailsPage() {
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/properties/${id}`);
+        const token = localStorage.getItem('token'); // Get the token from localStorage
+        if (!token) {
+          console.error('No token found');
+          return;
+        }
+        const response = await axios.get(`http://localhost:5000/api/properties/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}` // Add the authorization header to the request
+          }
+        });
         setPropertyDetails(response.data);
       } catch (error) {
         console.error('Error fetching property details:', error);
       }
     };
-
+    
+  
     fetchPropertyDetails();
   }, [id]);
 
@@ -130,17 +140,17 @@ function PropertyDetailsPage() {
             <p>Description: {propertyDetails.description}</p>
           </div>
           <div className="contact-info">
-            <div className="user-name">
-              <label>Name:</label>
-              <div>{propertyDetails.userName}</div>
-            </div>
-            <div className="user-phone">
-              <label>Phone:</label>
-              <div>{propertyDetails.phoneNumber}</div>
-            </div>
-            <textarea placeholder="Write your message here"></textarea>
-            <button>Send Message</button>
-          </div>
+  <div className="user-name">
+    {/* Ensure that the propertyDetails object has a userId property with user details */}
+    <p>Name: {propertyDetails.userId?.fullName}</p> 
+  </div>
+  <div className="user-phone">
+    {/* Ensure that the propertyDetails object has a userId property with user details */}
+    <p>Phone: {propertyDetails.userId?.phone}</p>
+  </div>
+  <textarea placeholder="Write your message here"></textarea>
+  <button>Send Message</button>
+</div>
         </div>
 
         {/* Modal Popup */}

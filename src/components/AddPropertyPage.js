@@ -47,36 +47,41 @@ function AddPropertyPage() {
     formData.append('area', area);
     formData.append('price', price);
     formData.append('description', description);
+  
     if (images) {
       for (let i = 0; i < images.length; i++) {
         formData.append('images', images[i]);
       }
     }
-    
+  
     if (image360) {
       for (let i = 0; i < image360.length; i++) {
         formData.append('image360', image360[i]);
       }
     }
-
+  
     if (video) {
       formData.append('video', video);
     }
-
+  
     if (propertyPapers) {
       for (let i = 0; i < propertyPapers.length; i++) {
         formData.append('propertyPapers', propertyPapers[i]);
       }
     }
-
+  
     if (featurePhoto) {
       formData.append('featurePhoto', featurePhoto);
     }
-
+  
+    // Retrieve the token from localStorage (or where it is stored)
+    const token = localStorage.getItem('token');
+  
     try {
       const response = await axios.post('http://localhost:5000/api/properties/add', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}` // Include the token in the Authorization header
         }
       });
       console.log(response.data);
@@ -86,6 +91,7 @@ function AddPropertyPage() {
       alert("Failed to add property.");
     }
   };
+  
 
   return (
     <div className="add-property-page">
