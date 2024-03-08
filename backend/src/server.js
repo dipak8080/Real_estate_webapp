@@ -4,9 +4,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
-const propertyRoutes = require('./routes/properties'); // Ensure this is the correct path to your property routes file
+const propertiesRoutes = require('./routes/properties'); // This should match your actual file name
+const messageRoutes = require('./routes/messageRoutes'); // Ensure the file name is correct
 
 const app = express();
+
 // Detailed CORS configuration
 const corsOptions = {
   origin: 'http://localhost:3000', // Adjust if your frontend is served from a different origin
@@ -27,12 +29,13 @@ app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-   .then(() => console.log('Connected to MongoDB'))
-   .catch(err => console.error('Could not connect to MongoDB', err));
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Use routes from the routes files
 app.use('/api/users', userRoutes);
-app.use('/api/properties', propertyRoutes);
+app.use('/api/properties', propertiesRoutes); // Updated to the correct name
+app.use('/api/messages', messageRoutes);
 
 // Define a simple route for testing
 app.get('/', (req, res) => {

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the schema for the property
 const propertySchema = new mongoose.Schema({
   propertyType: {
     type: String,
@@ -30,6 +29,14 @@ const propertySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   images: [{
     type: String,
   }],
@@ -39,26 +46,20 @@ const propertySchema = new mongoose.Schema({
   propertyPapers: [{
     type: String,
   }],
-  video: {
-    type: String,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
   featurePhoto: {
     type: String,
   },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', 
+  video: {
+    type: String,
+  },
+  isArchived: { // Add this field to support archiving functionality
+    type: Boolean,
+    default: false,
   },
 }, {
   timestamps: true,
 });
 
-// Create the model from the schema
 const Property = mongoose.model('Property', propertySchema);
 
-// Export the model
 module.exports = Property;

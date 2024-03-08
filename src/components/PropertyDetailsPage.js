@@ -3,48 +3,46 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Viewer } from '@photo-sphere-viewer/core';
 import '@photo-sphere-viewer/core/index.css';
-
 import './PropertyDetailsPage.css';
 
 function PropertyDetailsPage() {
   const [propertyDetails, setPropertyDetails] = useState(null);
-  const [modalImage, setModalImage] = useState(null); // For handling modal image popups
-  const viewersRef = useRef([]); // Ref to store the viewers
+  const [modalImage, setModalImage] = useState(null);
+  const [message, setMessage] = useState(''); // State to hold the message content
+  const viewersRef = useRef([]);
   const { id } = useParams();
   const baseUrl = 'http://localhost:5000/uploads/';
 
   useEffect(() => {
     const fetchPropertyDetails = async () => {
       try {
-        const token = localStorage.getItem('token'); // Get the token from localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           console.error('No token found');
           return;
         }
         const response = await axios.get(`http://localhost:5000/api/properties/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}` // Add the authorization header to the request
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         setPropertyDetails(response.data);
       } catch (error) {
         console.error('Error fetching property details:', error);
       }
     };
-    
-  
+
     fetchPropertyDetails();
   }, [id]);
 
   useEffect(() => {
-    // Destroy existing viewers to prevent duplicates
     viewersRef.current.forEach((viewer) => viewer.destroy());
     viewersRef.current = [];
 
     if (propertyDetails && propertyDetails.image360 && propertyDetails.image360.length > 0) {
       propertyDetails.image360.forEach((image360Url, index) => {
         const viewerElement = document.querySelector(`#viewer360-${index}`);
-        if (!viewerElement) return; // Guard against missing elements
+        if (!viewerElement) return;
 
         const viewer = new Viewer({
           container: viewerElement,
@@ -55,15 +53,12 @@ function PropertyDetailsPage() {
       });
     }
 
-    // Cleanup function to destroy all viewers when the component unmounts or updates
     return () => {
       viewersRef.current.forEach((viewer) => {
-        // Only attempt to destroy the viewer if it's still present in the DOM
         if (viewer && viewer.container && viewer.container.parentNode) {
           viewer.destroy();
         }
       });
-      // Clear the viewersRef array after destroying the viewers
       viewersRef.current = [];
     };
   }, [propertyDetails, baseUrl]);
@@ -74,6 +69,33 @@ function PropertyDetailsPage() {
 
   const closeModal = () => {
     setModalImage(null);
+  };
+
+  // Function to handle message submission
+  const handleMessageSubmit = async (e) => {
+    e.preventDefault();
+    if (!message.trim()) return; // Prevent sending empty messages
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        'http://localhost:5000/api/messages',
+        {
+          propertyId: id,
+          content: message,
+          recipientId: propertyDetails.userId, // Assuming this ID is part of propertyDetails
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessage(''); // Clear message input after sending
+      alert('Message sent successfully!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   if (!propertyDetails) {
@@ -140,17 +162,17 @@ function PropertyDetailsPage() {
             <p>Description: {propertyDetails.description}</p>
           </div>
           <div className="contact-info">
-  <div className="user-name">
-    {/* Ensure that the propertyDetails object has a userId property with user details */}
-    <p>Name: {propertyDetails.userId?.fullName}</p> 
-  </div>
-  <div className="user-phone">
-    {/* Ensure that the propertyDetails object has a userId property with user details */}
-    <p>Phone: {propertyDetails.userId?.phone}</p>
-  </div>
-  <textarea placeholder="Write your message here"></textarea>
-  <button>Send Message</button>
-</div>
+            <p>Name: {propertyDetails.userId?.fullName}</p>
+            <p>Phone: {propertyDetails.userId?.phone}</p>
+            <form onSubmit={handleMessageSubmit}>
+              <textarea
+                placeholder="Write your message here"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              ></textarea>
+              <button type="submit">Send Message</button>
+            </form>
+          </div>
         </div>
 
         {/* Modal Popup */}

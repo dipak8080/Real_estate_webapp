@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Property = require('../models/Property');
 
 // Function to handle the creation of a property
@@ -38,7 +39,8 @@ const createProperty = async (req, res) => {
 // Function to list all properties
 const listProperties = async (req, res) => {
   try {
-    const properties = await Property.find();
+    // Adjust this line to exclude archived properties from the results
+    const properties = await Property.find({ isArchived: false });
     res.status(200).json(properties);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -69,8 +71,74 @@ const getPropertyDetails = async (req, res) => {
 
 
 
+// Function to archive a property
+const archiveProperty = async (req, res) => {
+  try {
+    const property = await Property.findByIdAndUpdate(req.params.id, { isArchived: true }, { new: true });
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    res.json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Function to unarchive a property
+const unarchiveProperty = async (req, res) => {
+  try {
+    const property = await Property.findByIdAndUpdate(req.params.id, { isArchived: false }, { new: true });
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    res.json(property);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Function to delete a property
+const deleteProperty = async (req, res) => {
+  try {
+    const property = await Property.findByIdAndDelete(req.params.id);
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+    res.json({ message: 'Property deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const listAllPropertiesForOwner = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID.' });
+    }
+
+    const properties = await Property.find({ userId: userId });
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error('Server error in listAllPropertiesForOwner:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+
 module.exports = {
   createProperty,
   listProperties,
-  getPropertyDetails, // Exporting the new function
-};  
+  getPropertyDetails,
+  archiveProperty,
+  unarchiveProperty,
+  deleteProperty,
+  listAllPropertiesForOwner,
+};
+
+
+
+
+ 

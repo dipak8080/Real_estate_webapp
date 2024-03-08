@@ -95,3 +95,86 @@
 .profile-content button:hover {
   background-color: #45a049;
 }
+
+/* Additional styles for the messaging interface */
+/* Base layout styles */
+.layout {
+  display: flex;
+  height: 100vh; /* Use the full height of the viewport */
+}
+
+/* Styles for the sidebar navigation */
+.sidebar {
+  width: 200px; /* Set the width of the sidebar */
+  background-color: #f9f9f9;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Styles for the user list section */
+.user-list {
+  width: 200px; /* Set the width of the user list */
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-left: 20px; /* Add spacing between sidebar and user list */
+  overflow-y: auto; /* Allow scrolling inside the user list */
+  border-right: 1px solid #ddd; /* Separate from the chat area */
+}
+
+/* Styles for the chat area */
+.chat-area {
+  flex-grow: 1; /* Take up remaining space */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  padding: 20px;
+  margin-left: 20px; /* Add spacing between user list and chat area */
+}
+
+/* Message list within chat area */
+.messages {
+  flex-grow: 1; /* Take up available space */
+  overflow-y: auto; /* Allow scrolling inside the message list */
+  margin-bottom: 20px; /* Space before the input box */
+  padding-right: 20px; /* Align right side with the input box */
+}
+
+/* Message input box */
+.input-box {
+  border-top: 1px solid #ddd; /* Separate from the message list */
+  padding: 10px 0;
+  background-color: #fff;
+}
+
+/* Input and send button */
+.input-box input {
+  width: calc(100% - 100px); /* Leave space for the send button */
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-right: 10px; /* Space between input and button */
+}
+
+.input-box button {
+  width: 80px;
+  background-color: #5cb85c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Message bubble */
+.message {
+  background-color: #e9ecef;
+  padding: 10px;
+  border-radius: 18px;
+  margin-bottom: 8px;
+  max-width: 60%;
+  word-wrap: break-word;
+}
+
+/* Adjustments for the selected user */
+.user-list .user.active {
+  background-color: #4cae4c;
+  color: white;
+}
