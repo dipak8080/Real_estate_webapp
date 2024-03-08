@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 // Registration handler
 exports.register = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        // Destructure all fields from req.body
+        const { fullName, email, phone, location, password } = req.body;
 
         // Check if the user already exists
         const userExists = await User.findOne({ email });
@@ -18,8 +19,11 @@ exports.register = async (req, res) => {
 
         // Create a new user instance
         const newUser = new User({
-            email,
-            password: hashedPassword
+            fullName, // included from req.body
+            email,    // included from req.body
+            phone,    // included from req.body
+            location, // included from req.body
+            password: hashedPassword // hashed password
         });
 
         // Save the new user to the database
@@ -28,8 +32,10 @@ exports.register = async (req, res) => {
         // Respond with the new user (excluding the password)
         res.status(201).json({
             userId: user._id,
-            email: user.email
-            // You can add other user fields you want to return here
+            fullName: user.fullName, // Include the fullName in the response
+            email: user.email,
+            phone: user.phone,       // Include the phone in the response
+            location: user.location  // Include the location in the response
         });
     } catch (error) {
         res.status(500).json({ message: 'Error registering new user', error: error.message });
