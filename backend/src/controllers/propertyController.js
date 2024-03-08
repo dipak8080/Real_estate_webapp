@@ -25,7 +25,7 @@ const createProperty = async (req, res) => {
       image360,
       propertyPapers,
       featurePhoto,
-      video, // Add the video filename to the property object
+      video, 
     });
 
     await property.save();
@@ -66,9 +66,6 @@ const getPropertyDetails = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
-
 
 
 
