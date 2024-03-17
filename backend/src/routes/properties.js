@@ -3,7 +3,8 @@ const router = express.Router();
 const upload = require('../utils/upload');
 const authMiddleware = require('../middleware/authMiddleware');
 
-// Destructure your imported functions for clarity and to avoid potential naming conflicts.
+// Make sure to include the searchProperties function in your destructured imports
+// If it's not already defined in your propertyController.js, you'll need to add it there.
 const { 
   createProperty, 
   listProperties, 
@@ -11,7 +12,8 @@ const {
   archiveProperty, 
   unarchiveProperty, 
   deleteProperty, 
-  listAllPropertiesForOwner 
+  listAllPropertiesForOwner,
+  searchProperties // Ensure this is defined and properly exported in your propertyController.js
 } = require('../controllers/propertyController');
 
 // POST route to create a new property. Protected by authMiddleware.
@@ -23,8 +25,10 @@ router.post('/add', authMiddleware, upload.fields([
   { name: 'featurePhoto', maxCount: 1 }
 ]), createProperty);
 
+// Search route to find properties based on filters, protected by authMiddleware.
+router.get('/search', authMiddleware, searchProperties);
+
 // GET route to list all properties for the owner. Protected by authMiddleware.
-// This should be above the '/:id' route to avoid conflicts.
 router.get('/my-properties', authMiddleware, listAllPropertiesForOwner);
 
 // GET route to list all active (non-archived) properties.

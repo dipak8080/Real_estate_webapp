@@ -127,6 +127,48 @@ const listAllPropertiesForOwner = async (req, res) => {
 
 
 
+// Function to search properties with filters
+const searchProperties = async (req, res) => {
+  try {
+    const { district, location, price, propertyType } = req.query;
+
+    // Set up the base query object
+    let query = { isArchived: false };
+
+    // Add district to query if it exists
+    if (district) {
+      query.district = new RegExp(district, 'i');
+    }
+
+    // Add location to query if it exists
+    if (location) {
+      query.location = new RegExp(location, 'i');
+    }
+
+    // Add property type to query if it exists
+    if (propertyType) {
+      query.propertyType = new RegExp(`^${propertyType}`, 'i');
+    }
+
+    // Add price range to query if price is specified
+    if (price) {
+      const priceAsNumber = Number(price);
+      const priceRange = 5000; // Define the range for price flexibility
+      query.price = {
+        $gte: priceAsNumber - priceRange,
+        $lte: priceAsNumber + priceRange
+      };
+    }
+
+    // Find properties using the constructed query object
+    const properties = await Property.find(query);
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 module.exports = {
   createProperty,
@@ -136,6 +178,7 @@ module.exports = {
   unarchiveProperty,
   deleteProperty,
   listAllPropertiesForOwner,
+  searchProperties,
 };
 
 
