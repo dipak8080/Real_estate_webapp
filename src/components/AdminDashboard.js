@@ -12,6 +12,7 @@ const AdminDashboard = () => {
       <div className="dashboard-buttons">
         <button onClick={() => navigate('/admin/users')}>Manage Users</button>
         <button onClick={() => navigate('/admin/properties')}>Manage Properties</button>
+        <button onClick={() => navigate('/admin/manage-featured-properties')}>Manage Featured Properties</button>
       </div>
       {/* You can include any other overview information or quick actions here */}
     </div>

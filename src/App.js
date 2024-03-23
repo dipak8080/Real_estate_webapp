@@ -14,6 +14,7 @@ import AdminDashboard from './components/AdminDashboard';
 import UserList from './components/UserList';
 import EditUser from './components/EditUser';
 import ManageProperties from './components/ManageProperties'; 
+import ManageFeaturedProperties from './components/ManageFeaturedProperties';
 
 function App() {
   return (
@@ -54,6 +55,12 @@ function App() {
               <EditUser />
             </ProtectedRoute>
           }/>
+          <Route path="/admin/manage-featured-properties" element={
+            <ProtectedRoute adminOnly={true}>
+              <ManageFeaturedProperties />
+            </ProtectedRoute>
+          }/>
+          
 
           {/* Redirect to home if no match found */}
           <Route path="*" element={<Navigate to="/" replace />} />

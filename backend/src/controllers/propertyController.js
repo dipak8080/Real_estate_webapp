@@ -39,8 +39,14 @@ const createProperty = async (req, res) => {
 // Function to list all properties
 const listProperties = async (req, res) => {
   try {
-    // Adjust this line to exclude archived properties from the results
-    const properties = await Property.find({ isArchived: false });
+    const query = { isArchived: false };
+
+    // Check if 'featured' query parameter is used
+    if (req.query.featured) {
+      query.isFeatured = req.query.featured === 'true';
+    }
+
+    const properties = await Property.find(query);
     res.status(200).json(properties);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -153,7 +159,7 @@ const searchProperties = async (req, res) => {
     // Add price range to query if price is specified
     if (price) {
       const priceAsNumber = Number(price);
-      const priceRange = 5000; // Define the range for price flexibility
+      const priceRange = 5000; 
       query.price = {
         $gte: priceAsNumber - priceRange,
         $lte: priceAsNumber + priceRange

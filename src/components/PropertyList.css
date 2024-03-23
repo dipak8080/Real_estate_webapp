@@ -1,67 +1,62 @@
 /* PropertyList.css */
+
 .property-list {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px; 
+  margin: 0 auto; /* Center the section */
+  padding: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-gap: 30px; 
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+  justify-content: center;
 }
 
 .property-item {
-  background-color: #fff;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  overflow: hidden; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for each property */
+  border-radius: 8px; /* Rounded corners for elegance */
+  overflow: hidden; /* Ensure the image fits within the border radius */
+  transition: transform 0.3s ease;
+  cursor: pointer; /* Indicates the item is clickable */
 }
 
-.property-image {
+.property-item:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+}
+
+.property-image-wrapper img {
   width: 100%;
-  height: 200px; 
-  object-fit: cover; 
+  display: block; /* Remove any extra space beneath the image */
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  height: 200px; /* Fixed height for all images */
+  object-fit: cover; /* Ensures the image covers the area */
 }
 
-.property-description {
-  padding: 15px;
-  flex-grow: 1; 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; 
+.property-details {
+  padding: 10px;
+  text-align: center; /* Center the text */
 }
 
-.property-title {
+.property-details h3 {
+  margin: 0.5rem 0;
   font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 10px;
 }
 
-.property-text {
-  flex-grow: 1; 
-  color: #666;
+.property-details p {
+  font-size: 0.9rem;
+  color: #666; /* Lighter text color for the description */
+  margin-bottom: 1rem;
 }
 
 .details-button {
-  align-self: center;
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #0056b3;
+  background-color: #007bff; /* A blue that stands out */
   color: white;
   border: none;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 20px; /* Pill-shaped button */
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .details-button:hover {
-  background-color: #003d82;
-}
-
-/* Responsive design for smaller screens */
-@media (max-width: 768px) {
-  .property-list {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
+  background-color: #0056b3; /* Darker blue on hover for interaction feedback */
 }

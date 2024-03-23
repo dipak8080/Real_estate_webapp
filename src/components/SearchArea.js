@@ -61,7 +61,7 @@ function SearchArea() {
       ...(district && { district }),
       ...(location && { location }),
       ...(propertyType && { propertyType }),
-      ...(budget && { budget }),
+      ...(budget && { price: budget }),
     });
 
     try {

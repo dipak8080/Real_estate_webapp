@@ -52,10 +52,15 @@ const propertySchema = new mongoose.Schema({
   video: {
     type: String,
   },
-  isArchived: { // Add this field to support archiving functionality
+  isArchived: {
     type: Boolean,
     default: false,
   },
+  // Added field for featuring properties
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  }
 }, {
   timestamps: true,
 });

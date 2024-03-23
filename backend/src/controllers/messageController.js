@@ -1,7 +1,9 @@
 // controllers/messageController.js
 const Message = require('../models/Message');
-const User = require('../models/User'); // Make sure User model is imported
+const User = require('../models/User'); 
+const Property = require('../models/Property');
 
+// Sends a new message
 const sendMessage = async (req, res) => {
   const { recipientId, propertyId, content } = req.body;
   const senderId = req.user._id;
@@ -11,39 +13,48 @@ const sendMessage = async (req, res) => {
     recipientId,
     propertyId,
     content,
+    date: new Date(),
   });
 
   try {
-    await message.save();
-    // Populate the sender information before sending the response
-    await message.populate('senderId', 'fullName');
-    res.status(201).json(message);
+    const savedMessage = await message.save();
+    const populatedMessage = await Message.findById(savedMessage._id)
+      .populate('senderId', 'fullName')
+      .populate('propertyId', 'location');
+    res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(400).json({ message: "Failed to send message", error: error.message });
   }
 };
 
+// Retrieves all messages for the user, both sent and received
 const getMessagesForUser = async (req, res) => {
   const userId = req.user._id;
 
   try {
     const messages = await Message.find({
       $or: [{ senderId: userId }, { recipientId: userId }]
-    }).populate('senderId', 'fullName').populate('recipientId', 'fullName').populate('propertyId');
+    })
+    .populate('senderId', 'fullName') // Populating sender details
+    .populate('recipientId', 'fullName') // Populating recipient details
+    .populate({ path: 'propertyId', select: 'price location district' }); // Selectively populating property details
+
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: "Failed to get messages", error: error.message });
   }
 };
 
+// Replies to an existing message
 const sendReply = async (req, res) => {
   const { messageId } = req.params;
   const { content } = req.body;
   const senderId = req.user._id;
 
   try {
-    const originalMessage = await Message.findById(messageId);
-    if (!originalMessage) {
+    const messageToUpdate = await Message.findById(messageId);
+
+    if (!messageToUpdate) {
       return res.status(404).json({ message: "Original message not found." });
     }
 
@@ -53,50 +64,14 @@ const sendReply = async (req, res) => {
       date: new Date(),
     };
 
-    originalMessage.replies.push(reply); // This should add the reply to the 'replies' array
-    await originalMessage.save();
+    messageToUpdate.replies.push(reply);
+    const updatedMessage = await messageToUpdate.save();
+    const populatedMessage = await Message.findById(updatedMessage._id)
+      .populate('replies.senderId', 'fullName');
 
-    // Populate the sender information before sending the response
-    await originalMessage.populate('replies.senderId', 'fullName');
-    res.status(201).json({ message: "Reply sent successfully", reply: reply });
+    res.status(201).json(populatedMessage);
   } catch (error) {
     res.status(500).json({ message: "Failed to send reply", error: error.message });
-  }
-};
-
-
-// Get a list of users who have sent messages to the logged-in user
-const getSendersList = async (req, res) => {
-  const recipientId = req.user._id; // Assuming you have access to the user's ID from the auth middleware
-
-  try {
-    const messages = await Message.find({ recipientId: recipientId });
-    const senderIds = [...new Set(messages.map((message) => message.senderId))];
-    const senders = await User.find({ _id: { $in: senderIds } }).select('fullName');
-
-    res.status(200).json(senders.map(sender => ({ id: sender._id, fullName: sender.fullName })));
-  } catch (error) {
-    res.status(500).json({ message: "Failed to get senders list", error: error.message });
-  }
-};
-
-const getConversationByUsers = async (req, res) => {
-  const { recipientId, senderId } = req.query;
-
-  try {
-    const messages = await Message.find({
-      $or: [
-        { $and: [{ senderId: recipientId }, { recipientId: senderId }] },
-        { $and: [{ senderId: senderId }, { recipientId: recipientId }] }
-      ]
-    })
-    .populate('senderId', 'fullName')
-    .populate('recipientId', 'fullName')
-    .populate('propertyId'); // Ensure this populates necessary property details
-
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to get conversation", error: error.message });
   }
 };
 
@@ -104,6 +79,4 @@ module.exports = {
   sendMessage,
   getMessagesForUser,
   sendReply,
-  getConversationByUsers,
-  getSendersList,
 };

@@ -28,6 +28,10 @@ router.put('/property/unarchive/:propertyId', isAdmin, adminController.adminUnar
 // Route to delete a property
 router.delete('/property/:propertyId', isAdmin, adminController.adminDeleteProperty);
 
-// You can add more admin-specific routes here as needed
+// Admin route to feature a property
+router.put('/properties/:propertyId/feature', isAdmin, adminController.adminFeatureProperty);
+
+// Admin route to unfeature a property
+router.put('/properties/:propertyId/unfeature', isAdmin, adminController.adminUnfeatureProperty);
 
 module.exports = router;

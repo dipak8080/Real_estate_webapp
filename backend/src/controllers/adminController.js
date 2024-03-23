@@ -65,8 +65,15 @@ const adminController = {
 // Function to list all properties for the admin dashboard
 adminListProperties: async (req, res) => {
   try {
-    const properties = await Property.find(); // You can add any filters if needed
-    res.status(200).json(properties);
+    // Updated to populate the 'userId' field with user details
+    const properties = await Property.find().populate('userId');
+    const propertiesWithUserDetails = properties.map(property => {
+      return {
+        ...property.toObject(),
+        userFullName: property.userId.fullName // Assuming the user document has a 'fullName' field
+      };
+    });
+    res.status(200).json(propertiesWithUserDetails);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching properties', error: error.message });
   }
@@ -121,7 +128,43 @@ adminListProperties: async (req, res) => {
     }
   },
 
-  // You can add other admin functions here as needed
+  // Admin function to feature a property
+  adminFeatureProperty: async (req, res) => {
+    try {
+      const { propertyId } = req.params;
+      const property = await Property.findByIdAndUpdate(propertyId, { isFeatured: true }, { new: true });
+      
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+
+      res.json({
+        message: 'Property featured successfully',
+        property: property
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error featuring property', error: error.message });
+    }
+  },
+
+  // Admin function to unfeature a property
+  adminUnfeatureProperty: async (req, res) => {
+    try {
+      const { propertyId } = req.params;
+      const property = await Property.findByIdAndUpdate(propertyId, { isFeatured: false }, { new: true });
+      
+      if (!property) {
+        return res.status(404).json({ message: 'Property not found' });
+      }
+
+      res.json({
+        message: 'Property unfeatured successfully',
+        property: property
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error unfeaturing property', error: error.message });
+    }
+  },
 
 };
 

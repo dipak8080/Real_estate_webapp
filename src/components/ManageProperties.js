@@ -55,7 +55,7 @@ const ManageProperties = () => {
       <ul>
         {properties.map(property => (
           <li key={property._id}>
-            {property.title} - {property.location}
+            {property.title} - {property.location} - Posted by: {property.userId.fullName}
             <button onClick={() => handleArchiveToggle(property._id, property.isArchived)}>
               {property.isArchived ? 'Unarchive' : 'Archive'}
             </button>
