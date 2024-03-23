@@ -1,22 +1,22 @@
 // src/components/ProtectedRoute.js
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from './AuthContext'; // Adjust the import path as needed
+import { useAuth } from './AuthContext'; // Make sure the import path is correct
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const { isAuthenticated, isAdmin } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page. React Router v6 uses the state
-    // prop in Navigate for passing the current location to the login page.
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  return children; // If authenticated, render the child component
+  // If the route is for admins only and the user is not an admin, redirect to home or an unauthorized page
+  if (adminOnly && !isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children; // If authenticated, and not adminOnly or if adminOnly and isAdmin, render the child component
 };
 
 export default ProtectedRoute;

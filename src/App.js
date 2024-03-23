@@ -10,7 +10,10 @@ import PropertyDetailsPage from './components/PropertyDetailsPage';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Navbar from './components/Navbar';
-
+import AdminDashboard from './components/AdminDashboard';
+import UserList from './components/UserList';
+import EditUser from './components/EditUser';
+import ManageProperties from './components/ManageProperties'; 
 
 function App() {
   return (
@@ -23,13 +26,34 @@ function App() {
 
           {/* Routes With Navbar */}
           <Route element={<LayoutWithNavbar />}>
-            <Route path="/" element={<HomePage />} />
+            <Route index element={<HomePage />} />
             <Route path="buy" element={<ProtectedRoute><BuyPage /></ProtectedRoute>} />
             <Route path="add-property" element={<ProtectedRoute><AddPropertyPage /></ProtectedRoute>} />
             <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            {/* Update the route below to match the useParams hook in PropertyDetailsPage */}
             <Route path="property/:id" element={<ProtectedRoute><PropertyDetailsPage /></ProtectedRoute>} />
           </Route>
+
+          {/* Admin Dashboard and Related Routes */}
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }/>
+          <Route path="/admin/properties" element={
+            <ProtectedRoute adminOnly={true}>
+              <ManageProperties />
+            </ProtectedRoute>
+          }/>
+          <Route path="/admin/users" element={
+            <ProtectedRoute adminOnly={true}>
+              <UserList />
+            </ProtectedRoute>
+          }/>
+          <Route path="/admin/users/edit/:userId" element={
+            <ProtectedRoute adminOnly={true}>
+              <EditUser />
+            </ProtectedRoute>
+          }/>
 
           {/* Redirect to home if no match found */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -50,4 +74,3 @@ function LayoutWithNavbar() {
 }
 
 export default App;
-

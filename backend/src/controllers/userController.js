@@ -42,7 +42,7 @@ exports.register = async (req, res) => {
     }
 };
 
-// Login handler
+// In your login handler
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -63,15 +63,19 @@ exports.login = async (req, res) => {
         const token = jwt.sign(
             { userId: user._id },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' } // or another duration appropriate for your app
+            { expiresIn: '1h' } // Adjust the duration as needed
         );
 
-        // Respond with token
-        res.json({ token, userId: user._id });
+        // Respond with token and isAdmin status
+        res.json({
+            token: token, // Token generated for the user
+            isAdmin: user.isAdmin // Include the isAdmin flag in the response
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });
     }
 };
+
 
 // Logout handler
 exports.logout = (req, res) => {
@@ -133,3 +137,23 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
+// Function to upgrade a user to an admin - Should be protected and only accessible by super-admins
+exports.makeAdmin = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const updatedUser = await User.findByIdAndUpdate(userId, { isAdmin: true }, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({
+            message: 'User has been made an admin',
+            user: {
+                userId: updatedUser._id,
+                fullName: updatedUser.fullName,
+                isAdmin: updatedUser.isAdmin,
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user to admin', error: error.message });
+    }
+};

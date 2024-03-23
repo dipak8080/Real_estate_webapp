@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false, // Default value is false so only specific users can be admins
+  },
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
