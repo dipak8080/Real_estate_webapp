@@ -1,4 +1,3 @@
-// controllers/messageController.js
 const Message = require('../models/Message');
 const User = require('../models/User'); 
 const Property = require('../models/Property');
@@ -35,9 +34,9 @@ const getMessagesForUser = async (req, res) => {
     const messages = await Message.find({
       $or: [{ senderId: userId }, { recipientId: userId }]
     })
-    .populate('senderId', 'fullName') // Populating sender details
-    .populate('recipientId', 'fullName') // Populating recipient details
-    .populate({ path: 'propertyId', select: 'price location district' }); // Selectively populating property details
+    .populate('senderId', 'fullName')
+    .populate('recipientId', 'fullName')
+    .populate({ path: 'propertyId', select: 'price location district' });
 
     res.status(200).json(messages);
   } catch (error) {
@@ -65,18 +64,39 @@ const sendReply = async (req, res) => {
     };
 
     messageToUpdate.replies.push(reply);
-    const updatedMessage = await messageToUpdate.save();
-    const populatedMessage = await Message.findById(updatedMessage._id)
+    await messageToUpdate.save();
+
+    const updatedMessage = await Message.findById(messageId)
+      .populate('senderId', 'fullName')
+      .populate('recipientId', 'fullName')
+      .populate({ path: 'propertyId', select: 'price location district' })
       .populate('replies.senderId', 'fullName');
 
-    res.status(201).json(populatedMessage);
+    res.status(201).json(updatedMessage);
   } catch (error) {
     res.status(500).json({ message: "Failed to send reply", error: error.message });
   }
 };
 
+const getMessagesForConversation = async (req, res) => {
+  const { conversationId } = req.params;
+
+  try {
+    const messages = await Message.find({ conversationId: conversationId })
+      .populate('senderId', 'fullName')
+      .populate('recipientId', 'fullName')
+      .populate('propertyId', 'location price district');
+    
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to get messages for the conversation", error: error.message });
+  }
+};
+
+// Export the functions
 module.exports = {
   sendMessage,
   getMessagesForUser,
   sendReply,
+  getMessagesForConversation,
 };

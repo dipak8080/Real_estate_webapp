@@ -1,14 +1,15 @@
-// MessageComponent.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ProfilePage.css'; 
+import './ProfilePage.css';
 
 function MessageComponent({ token, userId }) {
   const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [selectedConversationId, setSelectedConversationId] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [error, setError] = useState('');
 
+  // useEffect for fetching conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -23,16 +24,28 @@ function MessageComponent({ token, userId }) {
     };
 
     fetchConversations();
-  }, [token]); // token is now a dependency of useEffect
+  }, [token]);
 
-  const handleSelectConversation = (conversation) => {
-    setSelectedConversation(conversation);
+  // Function to handle when a conversation is selected
+  const handleSelectConversation = async (conversationId) => {
+    setSelectedConversationId(conversationId);
+    try {
+      const response = await axios.get(`http://localhost:5000/api/messages/${conversationId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSelectedMessages(response.data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setError('Failed to fetch messages. Please try again.');
+    }
   };
 
+  // Event handler for reply textarea change
   const handleReplyChange = (event) => {
     setNewMessage(event.target.value);
   };
 
+  // Adjusted handleSendReply to re-fetch messages after sending a reply
   const handleSendReply = async () => {
     if (!newMessage.trim()) {
       setError("Reply cannot be empty.");
@@ -40,7 +53,7 @@ function MessageComponent({ token, userId }) {
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/messages/${selectedConversation._id}/reply`, {
+      const response = await axios.post(`http://localhost:5000/api/messages/${selectedConversationId}/reply`, {
         content: newMessage,
       }, {
         headers: { Authorization: `Bearer ${token}` }
@@ -48,7 +61,7 @@ function MessageComponent({ token, userId }) {
 
       if (response.status === 201) {
         setNewMessage('');
-        // Re-fetch the conversations to get the updated list including the new reply
+        await handleSelectConversation(selectedConversationId); // Refresh the message list
         setError('');
       } else {
         setError('Failed to send reply. Status code: ' + response.status);
@@ -59,13 +72,14 @@ function MessageComponent({ token, userId }) {
     }
   };
 
+  // Render function
   return (
     <div className="messages-content">
       <h2>My Messages</h2>
       {error && <p className="error">{error}</p>}
       <div className="conversation-list">
         {conversations.map((conversation) => (
-          <div key={conversation._id} className="conversation-item" onClick={() => handleSelectConversation(conversation)}>
+          <div key={conversation._id} className="conversation-item" onClick={() => handleSelectConversation(conversation._id)}>
             <strong>{conversation.senderId?.fullName || 'Unknown'}</strong>: {conversation.content}
             <div>
               {conversation.propertyId ? `${conversation.propertyId.location} - ${conversation.propertyId.price}` : 'No property details'}
@@ -73,10 +87,10 @@ function MessageComponent({ token, userId }) {
           </div>
         ))}
       </div>
-      {selectedConversation && (
+      {selectedConversationId && (
         <div className="selected-conversation">
           <div className="message-list">
-            {selectedConversation?.messages?.map((message) => (
+            {selectedMessages.map((message) => (
               <div key={message._id} className="message">
                 <strong>{message.senderId?.fullName || 'Unknown'}:</strong>
                 <span>{message.content}</span>

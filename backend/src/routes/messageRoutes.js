@@ -3,6 +3,7 @@ const {
   sendMessage,
   getMessagesForUser,
   sendReply,
+  getMessagesForConversation,
 
 } = require('../controllers/messageController');
 const authMiddleware = require('../middleware/authMiddleware');
@@ -18,6 +19,6 @@ router.get('/', authMiddleware, getMessagesForUser);
 // Route to send a reply to a message
 router.post('/:messageId/reply', authMiddleware, sendReply);
 
-
+router.get('/:conversationId', authMiddleware, getMessagesForConversation);
 
 module.exports = router;
