@@ -1,11 +1,13 @@
 require('dotenv').config();
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
+console.log('Server URL:', process.env.REACT_APP_SERVER_URL);
+
 
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
-const { setUpWebSocket } = require('./utils/socket'); 
+const initializeSocketServer = require('./utils/socket'); 
 
 const userRoutes = require('./routes/userRoutes');
 const propertiesRoutes = require('./routes/properties');
@@ -13,7 +15,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
-const server = http.createServer(app); // Create an HTTP server
+const server = http.createServer(app); 
 
 // Detailed CORS configuration
 const corsOptions = {
@@ -38,7 +40,7 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     // Initialize WebSocket after MongoDB is connected and before the server starts listening
-    setUpWebSocket(server);  // <-- Initialize WebSocket here
+    initializeSocketServer(server); // Corrected function call
   })
   .catch(err => console.error('Could not connect to MongoDB:', err));
 

@@ -4,11 +4,12 @@ import axios from 'axios';
 import { Viewer } from '@photo-sphere-viewer/core';
 import '@photo-sphere-viewer/core/index.css';
 import styles from './PropertyDetailsPage.module.css';
+import socket from '../utils/socket'; // Import the socket instance
 
 function PropertyDetailsPage() {
   const [propertyDetails, setPropertyDetails] = useState(null);
   const [modalImage, setModalImage] = useState(null);
-  const [message, setMessage] = useState(''); // State to hold the message content
+  const [message, setMessage] = useState(''); 
   const viewersRef = useRef([]);
   const { id } = useParams();
   const baseUrl = 'http://localhost:5000/uploads/';
@@ -64,33 +65,28 @@ function PropertyDetailsPage() {
   }, [propertyDetails, baseUrl]);
 
 
-
-  // Function to handle message submission
-  const handleMessageSubmit = async (e) => {
+  const handleMessageSubmit = (e) => {
     e.preventDefault();
     if (!message.trim()) return; // Prevent sending empty messages
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'http://localhost:5000/api/messages',
-        {
-          propertyId: id,
-          content: message,
-          recipientId: propertyDetails.userId, // Assuming this ID is part of propertyDetails
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setMessage(''); // Clear message input after sending
-      alert('Message sent successfully!');
-    } catch (error) {
-      console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
-    }
+  
+    // Emit the message to the server via socket
+    socket.emit('sendMessage', {
+      recipientId: propertyDetails.userId, // Assuming this ID is part of propertyDetails
+      content: message,
+    }, (response) => {
+      // Handle server response here
+      if (response && response.status === 'success') {
+        // Message was sent and handled successfully on the server
+        alert('Message sent successfully!');
+      } else {
+        // Server responded with an error or there was a client-side issue
+        alert('Failed to send message. Please try again.');
+      }
+    });
+  
+    setMessage(''); // Clear the message input after sending
   };
+  
 
   if (!propertyDetails) {
     return <div>Loading...</div>;

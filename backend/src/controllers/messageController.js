@@ -1,110 +1,132 @@
 const Message = require('../models/Message');
+const Conversation = require('../models/Conversation');
+const User = require('../models/User');
 
-const getIo = require('../utils/socket').getIo;
+let io = null; // This will be set by setSocketInstance
 
-// Function to create a new conversation
-exports.createConversation = async (req, res) => {
-    console.log('createConversation called with participants:', req.body.participants); 
-    const { participants } = req.body; // Array of user IDs
+const messageController = {
+  setSocketInstance: function (ioInstance) {
+    io = ioInstance; // Setting the io instance passed from the server setup
+  },
 
+  // Fetch conversations for a user
+  getUserConversations: async (req, res) => {
     try {
-        const newConversation = new Conversation({ participants });
-        await newConversation.save();
-        res.status(201).json({ message: 'New conversation created', conversation: newConversation });
+      const userId = req.user._id;
+      const conversations = await Conversation.find({
+        participants: { $in: [userId] }
+      })
+      .populate('participants', 'fullName')
+      .populate({
+        path: 'messages',
+        populate: { path: 'sender', select: 'fullName' },
+        options: { sort: { 'createdAt': -1 } },
+        perDocumentLimit: 1 // Only get the most recent message for preview
+      });
+
+      res.json(conversations);
     } catch (error) {
-        res.status(500).json({ message: 'Failed to create conversation', error: error.toString() });
+      res.status(500).json({ message: 'Error fetching conversations', error });
     }
+  },
+
+  // Send a new message
+  sendMessage: async (req, res) => {
+    try {
+      const { recipientId, content } = req.body;
+      const senderId = req.user._id; // Get sender ID from user object attached by auth middleware
+  
+    
+          // Retrieve or create a new conversation
+          let conversation = await Conversation.findOneAndUpdate(
+            { participants: { $all: [mongoose.Types.ObjectId(senderId), mongoose.Types.ObjectId(recipientId)] } },
+            { $setOnInsert: { messages: [] } }, // Don't set participants on insert, just ensure messages array is empty
+            { new: true, upsert: true }
+          );
+  
+      // Create and save the message
+      const message = new Message({
+        conversationId: conversation._id,
+        sender: senderId,
+        recipient: recipientId,
+        content: content,
+      });
+      await message.save();
+  
+      // Add message ID to conversation's messages array
+      conversation.messages.push(message._id);
+      await conversation.save();
+  
+      // Populate the message's sender information
+      await message.populate('sender', 'fullName').execPopulate();
+  
+      // Emit the message to both the sender and recipient using sockets
+      if (io) {
+        io.to(senderId.toString()).emit('newMessage', message);
+        io.to(recipientId.toString()).emit('newMessage', message);
+      } else {
+        console.error('Socket.io instance is not initialized.');
+      }
+  
+      res.status(201).json(message);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      res.status(500).json({ message: 'Error sending message', error });
+    }
+  },
+
+  // Fetch messages from a specific conversation
+  getConversationMessages: async (req, res) => {
+    try {
+      const { conversationId } = req.params;
+
+      // Validate if the user is part of the conversation
+      const conversation = await Conversation.findOne({ _id: conversationId, participants: req.user._id });
+      if (!conversation) {
+        return res.status(403).json({ message: "You're not a participant of this conversation." });
+      }
+
+      const messages = await Message.find({ conversationId })
+        .populate('sender', 'fullName')
+        .sort('createdAt');
+
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching messages', error });
+    }
+  },
+
+  // Real-time message handling
+  handleRealTimeMessage: async ({ senderId, recipientId, content }, socket) => {
+    try {
+      // Retrieve or create a conversation between sender and recipient
+      let conversation = await Conversation.findOneAndUpdate(
+        { participants: { $all: [senderId, recipientId] } },
+        { $setOnInsert: { participants: [senderId, recipientId] } },
+        { new: true, upsert: true }
+      );
+
+      // Create and save the message
+      const message = new Message({
+        conversationId: conversation._id,
+        sender: senderId,
+        recipient: recipientId,
+        content: content,
+      });
+      await message.save();
+
+      // Add message to conversation's messages array
+      conversation.messages.push(message);
+      await conversation.save();
+
+      // Emit the message to the sender and recipient
+      socket.to(senderId.toString()).emit('newMessage', message);
+      socket.to(recipientId.toString()).emit('newMessage', message);
+    } catch (error) {
+      console.error('Real-time message handling error:', error);
+    }
+  },
 };
 
-// Function to send a message within a conversation
-exports.sendMessage = async (req, res) => {
-    console.log('sendMessage called with:', req.body);
-    const { senderId, conversationId, content } = req.body;
 
-    try {
-        const newMessage = new Message({
-            conversation: conversationId,
-            sender: senderId,
-            content: content,
-        });
-        await newMessage.save();
-
-        await Conversation.findByIdAndUpdate(conversationId, {
-            lastMessage: newMessage._id,
-            $currentDate: { updatedAt: true }
-        });
-
-        const populatedMessage = await newMessage
-            .populate('sender', 'fullName')
-            .execPopulate();
-
-        const io = getIo();
-        io.to(conversationId.toString()).emit('newMessage', populatedMessage);
-        res.status(201).json(populatedMessage);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to send message', error: error.toString() });
-    }
-};
-
-// Function to list all conversations for a user
-exports.getConversations = async (req, res) => {
-    console.log('getConversations called for user:', req.user._id);
-    const userId = req.user._id; // Assume user id is available from the auth middleware
-
-    try {
-        const conversations = await Conversation.find({ participants: userId })
-                                                .populate('participants', 'fullName');
-        res.status(200).json(conversations);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch conversations', error: error.toString() });
-    }
-};
-
-// Function to get all messages within a conversation
-exports.getMessages = async (req, res) => {
-    console.log('getMessages called for conversation:', req.params.conversationId);
-    const { conversationId } = req.params;
-
-    try {
-        const messages = await Message.find({ conversation: conversationId })
-                                      .populate('sender', 'fullName location');
-
-        res.status(200).json(messages);
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to fetch messages', error: error.toString() });
-    }
-};
-
-exports.checkOrCreateConversation = async (req, res) => {
-    console.log('checkOrCreateConversation called with participants:', req.body.participants); 
-    const { participants } = req.body;
-
-    try {
-        // Sort participant IDs to ensure consistent order regardless of how they are submitted
-        const sortedParticipants = [...participants].sort();
-
-        // Check for an existing conversation with these exact participants
-        let conversation = await Conversation.findOne({
-            participants: { $all: sortedParticipants, $size: sortedParticipants.length }
-        }).populate('participants', 'fullName');
-
-        console.log('Existing conversation:', conversation);
-
-        if (!conversation) {
-            console.log('No existing conversation found, creating a new one.');
-            conversation = new Conversation({ participants: sortedParticipants });
-            await conversation.save();
-            conversation = await conversation.populate('participants', 'fullName').execPopulate();
-        }
-
-        console.log('Returning conversation:', conversation);
-        res.status(200).json(conversation);
-    } catch (error) {
-        console.error('Error checking or creating conversation:', error);
-        res.status(500).json({ message: 'Error checking or creating conversation', error: error.toString() });
-    }
-};
-
-
-
-
+module.exports = messageController;
