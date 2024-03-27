@@ -57,7 +57,7 @@ function PropertyList() {
               <p>District: {property.district}</p>
               <p>Municipality: {property.municipality}</p>
               <p>Price: {property.price}</p>
-              <h3>{property.description}</h3>
+              <p>{property.description}</p>
               <button className="details-button">Details</button>
             </div>
           </div>

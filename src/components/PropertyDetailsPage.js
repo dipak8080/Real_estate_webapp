@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Viewer } from '@photo-sphere-viewer/core';
 import '@photo-sphere-viewer/core/index.css';
-import './PropertyDetailsPage.css';
+import styles from './PropertyDetailsPage.module.css';
 
 function PropertyDetailsPage() {
   const [propertyDetails, setPropertyDetails] = useState(null);
@@ -63,13 +63,7 @@ function PropertyDetailsPage() {
     };
   }, [propertyDetails, baseUrl]);
 
-  const openModal = (imagePath) => {
-    setModalImage(`${baseUrl}${imagePath}`);
-  };
 
-  const closeModal = () => {
-    setModalImage(null);
-  };
 
   // Function to handle message submission
   const handleMessageSubmit = async (e) => {
@@ -102,27 +96,37 @@ function PropertyDetailsPage() {
     return <div>Loading...</div>;
   }
 
+  const openModal = (imagePath) => {
+    setModalImage(`${baseUrl}${imagePath}`);
+  };
+  
+  const closeModal = (event) => {
+    if (event.target === event.currentTarget) {
+      setModalImage(null);
+    }
+  };
+
   return (
     <>
-      <div className="property-details-container">
+      <div className={styles.propertyDetailsContainer}>
         {/* Property Images Section */}
-        <div className="gallery-section">
+        <div className={styles.gallerySection}>
           <h2>Property Images</h2>
-          <div className="gallery-container">
+          <div className={styles.galleryContainer}>
             {propertyDetails.images && propertyDetails.images.map((image, index) => (
-              <div className="gallery-item" key={index} onClick={() => openModal(image)}>
+              <div className={styles.galleryItem} key={index} onClick={() => openModal(image)}>
                 <img src={`${baseUrl}${image}`} alt={`Property ${index}`} />
               </div>
             ))}
           </div>
         </div>
-
+  
         {/* Property Papers Section */}
-        <div className="gallery-section">
+        <div className={styles.gallerySection}>
           <h2>Property Papers</h2>
-          <div className="papers-container">
+          <div className={styles.papersContainer}>
             {propertyDetails.propertyPapers && propertyDetails.propertyPapers.map((paper, index) => (
-              <div className="gallery-item" key={index} onClick={() => openModal(paper)}>
+              <div className={styles.galleryItem} key={index} onClick={() => openModal(paper)}>
                 <img src={`${baseUrl}${paper}`} alt={`Property paper ${index}`} />
               </div>
             ))}
@@ -151,42 +155,48 @@ function PropertyDetailsPage() {
         )}
 
         {/* Contact Details Section */}
-        <div className="details">
-          <div className="property-info">
-            <h2>Property Details</h2>
-            <p>State: {propertyDetails.state}</p>
-            <p>District: {propertyDetails.district}</p>
-            <p>Location: {propertyDetails.location}</p>
-            <p>Area: {propertyDetails.area}</p>
-            <p>Price: {propertyDetails.price}</p>
-            <p>Description: {propertyDetails.description}</p>
-          </div>
-          <div className="contact-info">
-            <p>Name: {propertyDetails.userId?.fullName}</p>
-            <p>Phone: {propertyDetails.userId?.phone}</p>
-            <form onSubmit={handleMessageSubmit}>
-              <textarea
-                placeholder="Write your message here"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              ></textarea>
-              <button type="submit">Send Message</button>
-            </form>
-          </div>
-        </div>
+<div className={styles.details}>
+  <div className={styles.propertyInfo}>
+    <h2>Property Details</h2>
+    <p>State: {propertyDetails.state}</p>
+    <p>District: {propertyDetails.district}</p>
+    <p>Location: {propertyDetails.location}</p>
+    <p>Area: {propertyDetails.area}</p>
+    <p>Price: {propertyDetails.price}</p>
+    <p>Description: {propertyDetails.description}</p>
+  </div>
+  <div className={styles.contactInfo}>
+    <p>Name: {propertyDetails.userId?.fullName}</p>
+    <p>Phone: {propertyDetails.userId?.phone}</p>
+    <form onSubmit={handleMessageSubmit}>
+      <textarea
+        className={styles.messageBox} // Use the correct class name from your CSS module
+        placeholder="Write your message here"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      ></textarea>
+      <button 
+        className={styles.sendMessageButton} // Use the correct class name from your CSS module
+        type="submit"
+      >
+        Send Message
+      </button>
+    </form>
+  </div>
+</div>
 
-        {/* Modal Popup */}
-        {modalImage && (
-          <div className="modal" onClick={closeModal}>
-            <span className="close" onClick={closeModal}>&times;</span>
-            <div className="modal-content">
-              <img src={modalImage} alt="Expanded view" />
-            </div>
-          </div>
-        )}
+       {/* Modal Popup */}
+      {modalImage && (
+        <div className={styles.modal} onClick={closeModal}>
+        <div className={styles.modalContent} onClick={closeModal}>
+          <img src={modalImage} alt="Expanded view" />
+          <span className={styles.close} onClick={closeModal}>&times;</span>
+        </div>
       </div>
-    </>
-  );
+      )}
+    </div>
+  </>
+);
 }
 
 export default PropertyDetailsPage;
