@@ -1,24 +1,18 @@
 const express = require('express');
-const {
-  sendMessage,
-  getMessagesForUser,
-  sendReply,
-  getMessagesForConversation,
-
-} = require('../controllers/messageController');
+const router = express.Router();
+const { checkOrCreateConversation, getConversations, sendMessage, getMessages } = require('../controllers/messageController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-const router = express.Router();
+// Endpoint to check or create a conversation
+router.post('/conversations/checkOrCreate', authMiddleware, checkOrCreateConversation);
 
-// Route to send a new message
-router.post('/', authMiddleware, sendMessage);
+// Endpoint to get all conversations for a user
+router.get('/conversations', authMiddleware, getConversations);
 
-// Route to get all messages for the logged-in user
-router.get('/', authMiddleware, getMessagesForUser);
+// Endpoint to get all messages within a conversation
+router.get('/conversations/:conversationId/messages', authMiddleware, getMessages);
 
-// Route to send a reply to a message
-router.post('/:messageId/reply', authMiddleware, sendReply);
-
-router.get('/:conversationId', authMiddleware, getMessagesForConversation);
+// Endpoint to send a message within a conversation
+router.post('/conversations/:conversationId/messages', authMiddleware, sendMessage);
 
 module.exports = router;

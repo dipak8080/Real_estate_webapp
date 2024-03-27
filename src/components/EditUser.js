@@ -1,6 +1,8 @@
+// src/components/EditUser.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import styles from './EditUser.module.css'; // Import the CSS module
 
 const EditUser = () => {
   const { userId } = useParams();
@@ -50,11 +52,11 @@ const EditUser = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit User</h2>
-      {error && <p>{error}</p>}
-      {/* Render form fields */}
+    <form onSubmit={handleSubmit} className={styles.editUserForm}>
+      <h2 className={styles.editUserTitle}>Edit User</h2>
+      {error && <p className={styles.editUserError}>{error}</p>}
       <input
+        className={styles.editUserInput}
         type="text"
         name="fullName"
         placeholder="Full Name"
@@ -63,6 +65,7 @@ const EditUser = () => {
         required
       />
       <input
+        className={styles.editUserInput}
         type="email"
         name="email"
         placeholder="Email"
@@ -71,6 +74,7 @@ const EditUser = () => {
         required
       />
       <input
+        className={styles.editUserInput}
         type="tel"
         name="phone"
         placeholder="Phone"
@@ -79,6 +83,7 @@ const EditUser = () => {
         required
       />
       <input
+        className={styles.editUserInput}
         type="text"
         name="location"
         placeholder="Location"
@@ -86,7 +91,7 @@ const EditUser = () => {
         onChange={handleChange}
         required
       />
-      <button type="submit">Submit</button>
+      <button type="submit" className={styles.editUserSubmitBtn}>Submit</button>
     </form>
   );
 };

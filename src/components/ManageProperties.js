@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import styles from './ManageProperties.module.css';
 
 const ManageProperties = () => {
   const [properties, setProperties] = useState([]);
@@ -49,17 +50,27 @@ const ManageProperties = () => {
   };
 
   return (
-    <div>
-      <h2>Manage Properties</h2>
-      {error && <p>{error}</p>}
-      <ul>
+    <div className={styles.managePropertiesContainer}>
+      <h2 className={styles.managePropertiesTitle}>Manage Properties</h2>
+      {error && <p className={styles.managePropertiesError}>{error}</p>}
+      <ul className={styles.managePropertiesList}>
         {properties.map(property => (
-          <li key={property._id}>
+          <li key={property._id} className={styles.managePropertiesItem}>
             {property.title} - {property.location} - Posted by: {property.userId.fullName}
-            <button onClick={() => handleArchiveToggle(property._id, property.isArchived)}>
-              {property.isArchived ? 'Unarchive' : 'Archive'}
-            </button>
-            <button onClick={() => handleDelete(property._id)}>Delete</button>
+            <div>
+              <button
+                onClick={() => handleArchiveToggle(property._id, property.isArchived)}
+                className={`${styles.managePropertiesButton} ${property.isArchived ? styles.managePropertiesButton.unarchive : styles.managePropertiesButton.archive}`}
+              >
+                {property.isArchived ? 'Unarchive' : 'Archive'}
+              </button>
+              <button
+                onClick={() => handleDelete(property._id)}
+                className={styles.managePropertiesButton.delete}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -67,4 +78,4 @@ const ManageProperties = () => {
   );
 };
 
-export default ManageProperties;
+export default ManageProperties; 

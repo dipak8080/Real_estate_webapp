@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './FeaturedProperties.module.css';
 
 function ManageFeaturedProperties() {
   const [properties, setProperties] = useState([]);
@@ -53,16 +54,16 @@ function ManageFeaturedProperties() {
   }
 
   return (
-    <div>
-      <h1>Manage Featured Properties</h1>
-      <div className="property-list">
+    <div className="featured-section">
+      <h1 className="featured-title">Manage Featured Properties</h1>
+      <div className="featured-properties">
         {properties.map((property) => (
-          <div key={property._id} className="property-item">
+          <div key={property._id} className="property">
             <img 
               src={property.featurePhoto ? `http://localhost:5000/uploads/${property.featurePhoto}` : '/images/default-placeholder.png'} 
               alt="Feature" 
             />
-            <div className="property-info">
+            <div className="property-details">
               <h3>{property.title}</h3>
               <p>State: {property.state}</p>
               <p>Location: {property.location}</p>
@@ -70,13 +71,9 @@ function ManageFeaturedProperties() {
               <p>Municipality: {property.municipality}</p>
               <p>Price: {property.price}</p>
               <p>Uploaded by: {property.userFullName}</p>
-              <div className="property-actions">
-                {property.isFeatured ? (
-                  <button onClick={() => handleUnfeature(property._id)}>Unfeature</button>
-                ) : (
-                  <button onClick={() => handleFeature(property._id)}>Feature</button>
-                )}
-              </div>
+              <button onClick={() => property.isFeatured ? handleUnfeature(property._id) : handleFeature(property._id)}>
+                {property.isFeatured ? 'Unfeature' : 'Feature'}
+              </button>
             </div>
           </div>
         ))}

@@ -1,47 +1,20 @@
-// models/Message.js
 const mongoose = require('mongoose');
 
-const replySchema = new mongoose.Schema({
-  senderId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
 const messageSchema = new mongoose.Schema({
-  senderId: {
+  conversation: { // Reference to a Conversation model
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
     required: true,
+    ref: 'Conversation' // Reference the Conversation model here
   },
-  recipientId: {
+  sender: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
     required: true,
-  },
-  propertyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Property',
-    required: true,
+    ref: 'User' // References the User model
   },
   content: {
     type: String,
     required: true,
-  },
-  replies: [replySchema],
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+}, { timestamps: true }); // Mongoose uses timestamps to create createdAt and updatedAt fields
 
 module.exports = mongoose.model('Message', messageSchema);

@@ -1,0 +1,68 @@
+/* UserList.css - Scoped styles for UserList component */
+
+/* Use a specific class for the container to avoid affecting other elements */
+.user-list-container {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  /* Scope your headings to the component */
+  .user-list-container h2 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  /* Scope the error message */
+  .user-list-error {
+    color: #d32f2f;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  /* Scope the list and list items */
+  .user-list-ul {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .user-list-li {
+    background-color: #fff;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Scope buttons with a BEM-like approach */
+  .user-list-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+  
+  .user-list-button--edit {
+    background-color: #4CAF50; /* Green background for edit button */
+    color: white;
+  }
+  
+  .user-list-button--delete {
+    background-color: #F44336; /* Red background for delete button */
+    color: white;
+  }
+  
+  /* Scope the hover effect */
+  .user-list-button:hover {
+    opacity: 0.85;
+  }
+  

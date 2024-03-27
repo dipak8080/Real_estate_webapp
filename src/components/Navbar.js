@@ -23,9 +23,9 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <Link to="/">
-        <img src="/images/logo.png" alt="Estate Logo" className="logo" />
-      </Link>
+       <Link to="/" className="logo-text">
+    HAVEN
+  </Link>
       <div className="nav-links">
         <Link to="/buy">Buy</Link>
         <Link to="/profile">Profile</Link>

@@ -1,21 +1,26 @@
 require('dotenv').config();
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const http = require('http');
+const { setUpWebSocket } = require('./utils/socket'); 
+
 const userRoutes = require('./routes/userRoutes');
-const propertiesRoutes = require('./routes/properties'); 
-const messageRoutes = require('./routes/messageRoutes'); 
-const adminRoutes = require('./routes/adminRoutes'); 
+const propertiesRoutes = require('./routes/properties');
+const messageRoutes = require('./routes/messageRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
+const server = http.createServer(app); // Create an HTTP server
 
 // Detailed CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', 
-  credentials: true, 
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: 'http://localhost:3000',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 // Apply CORS middleware with the specified options
@@ -30,21 +35,26 @@ app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB:', err));
+  .then(() => {
+    console.log('Connected to MongoDB');
+    // Initialize WebSocket after MongoDB is connected and before the server starts listening
+    setUpWebSocket(server);  // <-- Initialize WebSocket here
+  })
+  .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Use routes from the routes files
 app.use('/api/users', userRoutes);
-app.use('/api/properties', propertiesRoutes); 
+app.use('/api/properties', propertiesRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/admin', adminRoutes);
 
-
 // Define a simple route for testing
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+    res.send('Hello World!');
 });
 
 // Listen on a port
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});

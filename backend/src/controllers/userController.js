@@ -69,7 +69,8 @@ exports.login = async (req, res) => {
         // Respond with token and isAdmin status
         res.json({
             token: token, // Token generated for the user
-            isAdmin: user.isAdmin // Include the isAdmin flag in the response
+            isAdmin: user.isAdmin, // Include the isAdmin flag in the response
+            userId: user._id // Send the user ID to the client
         });
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error: error.message });

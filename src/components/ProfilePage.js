@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import MessageComponent from './MessageComponent';
+
 import './ProfilePage.css';
 
 function ProfilePage() {
@@ -12,7 +12,7 @@ function ProfilePage() {
   const [properties, setProperties] = useState([]);
 
   const token = localStorage.getItem('token');
-  const userId = localStorage.getItem('userId');
+
 
   // Define fetchProperties outside of useEffect
   const fetchProperties = async () => {
@@ -130,21 +130,19 @@ function ProfilePage() {
     </div>
   );
 
-  const renderMessagesTab = () => {
-    return <MessageComponent token={token} userId={userId} />;
-  };
+
 
   return (
     <div className="profile-page">
       <aside className="sidebar">
         <button onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>My Profile</button>
         <button onClick={() => setActiveTab('properties')} className={activeTab === 'properties' ? 'active' : ''}>My Properties</button>
-        <button onClick={() => setActiveTab('messages')} className={activeTab === 'messages' ? 'active' : ''}>My Messages</button>
+      
       </aside>
       <section className="content">
         {activeTab === 'profile' && renderProfileTab()}
         {activeTab === 'properties' && renderPropertiesTab()}
-        {activeTab === 'messages' && renderMessagesTab()} 
+  
       </section>
     </div>
   );
@@ -152,4 +150,3 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
-

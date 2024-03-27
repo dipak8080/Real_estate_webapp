@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './UserList.css';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -41,15 +42,27 @@ const UserList = () => {
   };
 
   return (
-    <div>
+    <div className="user-list-container">
       <h2>User List</h2>
-      {error && <p>{error}</p>}
-      <ul>
+      {error && <p className="user-list-error">{error}</p>}
+      <ul className="user-list-ul">
         {users.map(user => (
-          <li key={user._id}>
+          <li key={user._id} className="user-list-li">
             {user.fullName} - {user.email}
-            <button onClick={() => handleEdit(user._id)}>Edit</button>
-            <button onClick={() => handleDelete(user._id)}>Delete</button>
+            <div>
+              <button 
+                className="user-list-button user-list-button--edit"
+                onClick={() => handleEdit(user._id)}
+              >
+                Edit
+              </button>
+              <button 
+                className="user-list-button user-list-button--delete"
+                onClick={() => handleDelete(user._id)}
+              >
+                Delete
+              </button>
+            </div>
           </li>
         ))}
       </ul>
