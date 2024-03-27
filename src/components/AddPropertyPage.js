@@ -160,7 +160,7 @@ function AddPropertyPage() {
         </div>
 
         <div className="form-group">
-          <label>Price ($):</label>
+          <label>Price (Rs):</label>
           <input 
             type="text" 
             name="price" 

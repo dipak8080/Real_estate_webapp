@@ -39,7 +39,7 @@ function FeaturedProperties() {
                 <p>Location: {property.location}</p>
                 <p>District: {property.district}</p>
                 <p>Municipality: {property.municipality}</p>
-                <p>Price: ${property.price}</p> {/* Assuming price is a number */}
+                <p>Price: {property.price}</p> 
                 <p>Description: {property.description}</p>
                 <button onClick={() => navigate(`/property/${property._id}`)}>Details</button>
               </div>
