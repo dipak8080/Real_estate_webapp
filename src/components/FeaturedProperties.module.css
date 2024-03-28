@@ -1,80 +1,79 @@
 /* FeaturedProperties.module.css */
 
 .featuredSection {
-    max-width: 1200px;
-    margin: 0 auto; /* Center the section */
-    padding: 20px;
-  }
-  
-  .featuredTitle {
-    text-align: center;
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: #333; /* Or any color that suits your design */
-  }
-  
-  .featuredProperties {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: 20px;
-    justify-content: center;
-  }
-  
-  .property {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for each property */
-    border-radius: 8px; /* Rounded corners for elegance */
-    overflow: hidden; /* Ensure the image fits within the border radius */
-    transition: transform 0.3s ease;
-    background-color: #fff; /* Add a background color */
-    display: flex;
-    flex-direction: column; /* Stack image and details */
-  }
-  
-  .property:hover {
-    transform: translateY(-5px); /* Slight lift effect on hover */
-  }
-  
-  .property img {
-    width: 100%;
-    height: 200px; /* Fixed height for consistency */
-    object-fit: cover; /* Cover the area without stretching */
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-  }
-  
-  .propertyDetails {
-    padding: 10px 15px;
-    text-align: center; /* Center the text */
-    flex: 1; /* Fill available space */
-    display: flex;
-    flex-direction: column; /* Stack details */
-    justify-content: space-between; /* Space between text and button */
-  }
-  
-  .propertyDetails h3 {
-    margin: 0.5rem 0;
-    font-size: 1.25rem;
-  }
-  
-  .propertyDetails p {
-    font-size: 0.9rem;
-    color: #666; /* Lighter text color for the description */
-    margin: 0.5em 0;
-  }
-  
-  .propertyDetails button {
-    background-color: #007bff; /* A blue that stands out */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px; /* Pill-shaped button */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    align-self: center; /* Center button */
-    margin-top: 1em;  /* Space from the last paragraph */
-  }
-  
-  .propertyDetails button:hover {
-    background-color: #0056b3; /* Darker blue on hover for interaction feedback */
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto; /* Center the section */
+  padding: 20px;
+}
+
+.featuredTitle {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #333; /* Or any color that suits your design */
+}
+
+.featuredProperties {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-gap: 20px;
+  justify-content: center;
+}
+
+.property {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for each property */
+  border-radius: 8px; /* Rounded corners for elegance */
+  overflow: hidden; /* Ensure the image fits within the border radius */
+  transition: transform 0.3s ease;
+  background-color: #fff; /* Add a background color */
+  display: flex;
+  flex-direction: column; /* Stack image and details */
+}
+
+.property:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+}
+
+.property img {
+  width: 100%;
+  height: 200px; /* Fixed height for consistency */
+  object-fit: cover; /* Cover the area without stretching */
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.propertyDetails {
+  padding: 10px 15px;
+  text-align: center; /* Center the text */
+  flex: 1; /* Fill available space */
+  display: flex;
+  flex-direction: column; /* Stack details */
+  justify-content: space-between; /* Space between text and button */
+}
+
+.propertyDetails h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.propertyDetails p {
+  font-size: 0.9rem;
+  color: #666; /* Lighter text color for the description */
+  margin: 0.5em 0;
+}
+
+.propertyDetails button {
+  background-color: #007bff; /* A blue that stands out */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px; /* Pill-shaped button */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: center; /* Center button */
+  margin-top: 1em;  /* Space from the last paragraph */
+}
+
+.propertyDetails button:hover {
+  background-color: #0056b3; /* Darker blue on hover for interaction feedback */
+}

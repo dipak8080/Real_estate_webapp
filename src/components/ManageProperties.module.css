@@ -1,69 +1,68 @@
 /* ManageProperties.module.css */
 
 .managePropertiesContainer {
-    padding: 2rem;
-    background-color: #f4f5f7;
-    min-height: 100vh;
-  }
-  
-  .managePropertiesTitle {
-    color: #333;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  .managePropertiesError {
-    color: #d32f2f;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  .managePropertiesList {
-    list-style: none;
-    padding: 0;
-    max-width: 600px;
-    margin: 1rem auto;
-  }
-  
-  .managePropertiesItem {
-    background-color: #fff;
-    padding: 1rem;
-    margin-bottom: 0.5rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1rem;
-  }
-  
-  .managePropertiesButton {
-    padding: 0.5rem 1rem;
-    margin-left: 0.5rem;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s;
-  }
-  
-  .managePropertiesButton.archive {
-    background-color: #f0ad4e;
-    color: white;
-  }
-  
-  .managePropertiesButton.unarchive {
-    background-color: #5cb85c;
-    color: white;
-  }
-  
-  .managePropertiesButton.delete {
-    background-color: #d9534f;
-    color: white;
-  }
-  
-  .managePropertiesButton:hover {
-    opacity: 0.85;
-  }
-  
+  padding: 2rem;
+  background-color: #f4f5f7;
+  min-height: 100vh;
+}
+
+.managePropertiesTitle {
+  color: #333;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.managePropertiesError {
+  color: #d32f2f;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.managePropertiesList {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+
+.managePropertiesItem {
+  background-color: #fff;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+}
+
+.managePropertiesButton {
+  padding: 0.5rem 1rem;
+  margin-left: 0.5rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.managePropertiesButton.archive {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.managePropertiesButton.unarchive {
+  background-color: #5cb85c;
+  color: white;
+}
+
+.managePropertiesButton.delete {
+  background-color: #d9534f;
+  color: white;
+}
+
+.managePropertiesButton:hover {
+  opacity: 0.85;
+}

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Message = require('../models/Message');
 const Conversation = require('../models/Conversation');
 const User = require('../models/User');
@@ -23,9 +24,10 @@ const messageController = {
         options: { sort: { 'createdAt': -1 } },
         perDocumentLimit: 1 // Only get the most recent message for preview
       });
-
+      console.log('Conversations:', conversations);
       res.json(conversations);
     } catch (error) {
+      console.error('Error fetching conversations:', error);
       res.status(500).json({ message: 'Error fetching conversations', error });
     }
   },
@@ -34,46 +36,53 @@ const messageController = {
   sendMessage: async (req, res) => {
     try {
       const { recipientId, content } = req.body;
-      const senderId = req.user._id; // Get sender ID from user object attached by auth middleware
+      const senderId = req.user._id;
   
-    
-          // Retrieve or create a new conversation
-          let conversation = await Conversation.findOneAndUpdate(
-            { participants: { $all: [mongoose.Types.ObjectId(senderId), mongoose.Types.ObjectId(recipientId)] } },
-            { $setOnInsert: { messages: [] } }, // Don't set participants on insert, just ensure messages array is empty
-            { new: true, upsert: true }
-          );
+      // Check if a conversation between these two users already exists
+      let conversation = await Conversation.findOne({
+        participants: { $all: [senderId, recipientId] }
+      });
   
-      // Create and save the message
+      // If the conversation does not exist, create it
+      if (!conversation) {
+        conversation = new Conversation({
+          participants: [senderId, recipientId],
+          messages: [] // Assuming we want to start with an empty messages array
+        });
+        await conversation.save();
+      }
+  
+      // Now that we have the conversation, we can create and save the message
       const message = new Message({
         conversationId: conversation._id,
         sender: senderId,
-        recipient: recipientId,
-        content: content,
+        recipient: recipientId, 
+        content: content
       });
-      await message.save();
   
-      // Add message ID to conversation's messages array
-      conversation.messages.push(message._id);
-      await conversation.save();
+      // Save the message and then populate the sender's information
+      const savedMessage = await message.save();
+      const populatedMessage = await Message.findById(savedMessage._id)
+        .populate('sender', 'fullName');
   
-      // Populate the message's sender information
-      await message.populate('sender', 'fullName').execPopulate();
+      // Push the message onto the conversation's messages array
+      await Conversation.findByIdAndUpdate(conversation._id, { $addToSet: { messages: savedMessage._id } });
   
       // Emit the message to both the sender and recipient using sockets
       if (io) {
-        io.to(senderId.toString()).emit('newMessage', message);
-        io.to(recipientId.toString()).emit('newMessage', message);
+        io.to(senderId.toString()).emit('newMessage', populatedMessage);
+        io.to(recipientId.toString()).emit('newMessage', populatedMessage);
       } else {
         console.error('Socket.io instance is not initialized.');
       }
   
-      res.status(201).json(message);
+      res.status(201).json(populatedMessage);
     } catch (error) {
       console.error('Error sending message:', error);
       res.status(500).json({ message: 'Error sending message', error });
     }
   },
+  
 
   // Fetch messages from a specific conversation
   getConversationMessages: async (req, res) => {
@@ -127,6 +136,5 @@ const messageController = {
     }
   },
 };
-
 
 module.exports = messageController;

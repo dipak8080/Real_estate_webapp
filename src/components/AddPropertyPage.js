@@ -212,5 +212,3 @@ function AddPropertyPage() {
 }
 
 export default AddPropertyPage;
-
-

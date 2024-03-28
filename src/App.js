@@ -15,6 +15,7 @@ import UserList from './components/UserList';
 import EditUser from './components/EditUser';
 import ManageProperties from './components/ManageProperties'; 
 import ManageFeaturedProperties from './components/ManageFeaturedProperties';
+import MessagePage from './components/MessagePage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="add-property" element={<ProtectedRoute><AddPropertyPage /></ProtectedRoute>} />
             <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             <Route path="property/:id" element={<ProtectedRoute><PropertyDetailsPage /></ProtectedRoute>} />
+            <Route path="messages" element={<ProtectedRoute><MessagePage /></ProtectedRoute>} />
           </Route>
 
           {/* Admin Dashboard and Related Routes */}
@@ -81,4 +83,3 @@ function LayoutWithNavbar() {
 }
 
 export default App;
-

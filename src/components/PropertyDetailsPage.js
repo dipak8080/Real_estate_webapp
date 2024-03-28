@@ -4,12 +4,14 @@ import axios from 'axios';
 import { Viewer } from '@photo-sphere-viewer/core';
 import '@photo-sphere-viewer/core/index.css';
 import styles from './PropertyDetailsPage.module.css';
-import socket from '../utils/socket'; // Import the socket instance
+//import socket from '../utils/socket'; // Import the socket instance
 
 function PropertyDetailsPage() {
   const [propertyDetails, setPropertyDetails] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [message, setMessage] = useState(''); 
+  const [isSending, setIsSending] = useState(false);
+  const [sendStatus, setSendStatus] = useState('');
   const viewersRef = useRef([]);
   const { id } = useParams();
   const baseUrl = 'http://localhost:5000/uploads/';
@@ -65,27 +67,50 @@ function PropertyDetailsPage() {
   }, [propertyDetails, baseUrl]);
 
 
-  const handleMessageSubmit = (e) => {
+  const handleMessageSubmit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return; // Prevent sending empty messages
   
-    // Emit the message to the server via socket
-    socket.emit('sendMessage', {
-      recipientId: propertyDetails.userId, // Assuming this ID is part of propertyDetails
-      content: message,
-    }, (response) => {
-      // Handle server response here
-      if (response && response.status === 'success') {
-        // Message was sent and handled successfully on the server
-        alert('Message sent successfully!');
-      } else {
-        // Server responded with an error or there was a client-side issue
-        alert('Failed to send message. Please try again.');
-      }
-    });
+    setIsSending(true); // Indicate that the message is being sent
+    setSendStatus(''); // Reset send status
   
-    setMessage(''); // Clear the message input after sending
+    // Retrieve the token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found');
+      setIsSending(false);
+      setSendStatus('Authentication error. Please log in.');
+      return;
+    }
+  
+    try {
+      // POST the message to your API
+      await axios.post(
+        'http://localhost:5000/api/messages/send', 
+        {
+          recipientId: propertyDetails.userId, // Assuming this ID is part of propertyDetails
+          content: message,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+  
+      setSendStatus('Message sent successfully!');
+      setMessage(''); // Clear the message input after sending
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setSendStatus('Failed to send message. Please try again.');
+    }
+  
+    setIsSending(false); // Update the sending status
+  
+    // Optionally, reset the send status after a delay
+    setTimeout(() => setSendStatus(''), 5000);
   };
+  
   
 
   if (!propertyDetails) {
@@ -177,6 +202,10 @@ function PropertyDetailsPage() {
       >
         Send Message
       </button>
+        {/* Message sending status feedback */}
+        <div className={styles.sendMessageStatus}>
+        {isSending ? <p>Sending...</p> : <p>{sendStatus}</p>}
+      </div>
     </form>
   </div>
 </div>

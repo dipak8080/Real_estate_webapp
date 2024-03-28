@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import './ProfilePage.css';
@@ -134,11 +135,14 @@ function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <aside className="sidebar">
-        <button onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>My Profile</button>
-        <button onClick={() => setActiveTab('properties')} className={activeTab === 'properties' ? 'active' : ''}>My Properties</button>
-      
-      </aside>
+        <aside className="sidebar">
+          <button onClick={() => setActiveTab('profile')} className={activeTab === 'profile' ? 'active' : ''}>My Profile</button>
+          <button onClick={() => setActiveTab('properties')} className={activeTab === 'properties' ? 'active' : ''}>My Properties</button>
+          
+          {/* Add this block for the Messages tab */}
+          <Link to="/messages" className={`sidebar-link ${activeTab === 'messages' ? 'active' : ''}`} onClick={() => setActiveTab('messages')}>Messages</Link>
+          
+        </aside>
       <section className="content">
         {activeTab === 'profile' && renderProfileTab()}
         {activeTab === 'properties' && renderPropertiesTab()}

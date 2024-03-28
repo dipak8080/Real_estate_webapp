@@ -37,6 +37,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
+    
   .then(() => {
     console.log('Connected to MongoDB');
     // Initialize WebSocket after MongoDB is connected and before the server starts listening
